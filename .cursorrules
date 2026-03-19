@@ -1,0 +1,59 @@
+# Datamodel.ai — Cursor Rules
+
+## Stack
+- Next.js 15 App Router — Server Components and Server Actions only
+- PostgreSQL + Drizzle ORM — JSONB for CDM/UDM data
+- Clerk — org-aware multi-tenant auth
+- Inngest — all background jobs
+- Claude API via Vercel AI SDK — generateObject + Zod only
+- shadcn/ui + Tailwind
+
+## Non-negotiable rules
+
+1. Server Actions for ALL mutations — never use API routes for mutations
+2. generateObject + Zod for ALL AI structured output — never parse raw text
+3. Inngest for ALL background jobs — never block API routes with sync
+4. org_id on EVERY DB query — never query without tenant scope
+5. Drizzle `with:` for relations — no N+1 queries
+6. revalidatePath after EVERY mutation
+7. One migration per story — never bundle schema changes
+8. Verification script per story — scripts/verify-s{N}.{N}.ts
+9. status = 'production' filter at DB layer — not in application code
+10. No hardcoded secrets — process.env only
+11. Exponential backoff on all connector API calls
+12. All sync operations logged to sync_logs
+
+## Auth pattern (every server action)
+const { orgId, userId } = await auth();
+if (!orgId || !userId) throw new Error('Unauthorized');
+
+## DB query pattern (every query)
+await db.query.tableName.findMany({
+  where: and(eq(table.orgId, orgId), ...otherConditions),
+});
+
+## AI pattern
+import { generateObject } from 'ai';
+import { z } from 'zod';
+const { object } = await generateObject({
+  model: anthropic(DEFAULT_MODEL),
+  schema: MyZodSchema,
+  prompt: '...',
+});
+
+## File structure
+- lib/actions/ — one file per domain (e.g. fields.ts, sources.ts)
+- lib/db/schema/ — one file per entity group
+- lib/connectors/ — one folder per source
+- lib/inngest/functions/ — one file per job
+- scripts/ — verify-s{N}.{N}.ts per story
+
+## What NOT to do
+- No client-side data fetching (no useEffect + fetch)
+- No direct db instantiation outside lib/db/index.ts
+- No AI calls that return raw text and parse with regex
+- No sync work in API routes
+- No queries without org_id scope
+- No hard deletes — status = 'deprecated' always
+- No field reaches production without approved_by + approved_at set
+- Agents only ever read status = 'production' fields — enforced at DB layer
