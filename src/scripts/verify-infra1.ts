@@ -49,9 +49,17 @@ async function run() {
   console.log('\nBUILD');
   await check('npm run build passes', () => {
     try {
-      execSync('npm run build', { stdio: 'pipe', timeout: 120000 });
+      // Strip NODE_ENV so Next.js can manage it internally
+      const { NODE_ENV: _removed, ...envWithout } = process.env;
+      const env = envWithout as NodeJS.ProcessEnv;
+      execSync('npm run build', { stdio: 'pipe', timeout: 120000, cwd: process.cwd(), env });
       return true;
-    } catch { return false; }
+    } catch (e) {
+      const err = e as { stderr?: Buffer; stdout?: Buffer; message?: string };
+      const detail = err.stderr?.toString() || err.stdout?.toString() || err.message || '';
+      if (detail) console.log(`     build output: ${detail.split('\n').slice(0, 3).join(' | ')}`);
+      return false;
+    }
   });
 
   console.log('\nENV VARS (local)');
