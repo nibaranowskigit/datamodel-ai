@@ -1,5 +1,12 @@
 # Datamodel.ai — Cursor Rules
 
+## Model instructions
+- You are operating as a senior Next.js/TypeScript engineer
+- Always read .cursorrules before generating any code
+- When in doubt, ask before writing — do not assume scope
+- Prefer editing existing files over creating new ones
+- Never generate code that contradicts .cursorrules
+
 ## Stack
 - Next.js 15 App Router — Server Components and Server Actions only
 - PostgreSQL + Drizzle ORM — JSONB for CDM/UDM data
@@ -48,6 +55,22 @@ const { object } = await generateObject({
 - lib/inngest/functions/ — one file per job
 - scripts/ — verify-s{N}.{N}.ts per story
 
+## DESIGN SYSTEM
+
+1. COLORS — Never use Tailwind color utilities directly (BAD: bg-gray-800, text-blue-500 / GOOD: bg-background, bg-card, text-foreground, text-primary). Exception: status indicators (text-green-400, text-red-400) OK inline.
+
+2. TYPOGRAPHY — Never use arbitrary font sizes (BAD: text-[13px] / GOOD: text-xs, text-sm). Headings: font-semibold tracking-tight. Muted: text-muted-foreground. Mono: font-mono for field_keys, IDs, code.
+
+3. ELEVATION — Borders over shadows in dark mode (BAD: shadow-md / GOOD: border border-border + bg layering). Layer order: bg-background → bg-card → bg-popover → bg-muted.
+
+4. SPACING — Tailwind scale only (BAD: p-[14px] / GOOD: p-3, p-4, gap-2, gap-3).
+
+5. DARK MODE — always active (html.dark). Never design for light first. Never bg-white.
+
+6. INTERACTIONS — Hover: duration-150 ease. Selected: border-primary/60 bg-primary/5. Disabled: opacity-40 cursor-not-allowed.
+
+7. COMPONENTS — Buttons: size variants only. Cards: rounded-xl. Inputs: h-9 bg-transparent border-input. Badges: semantic variants for status.
+
 ## What NOT to do
 - No client-side data fetching (no useEffect + fetch)
 - No direct db instantiation outside lib/db/index.ts
@@ -57,3 +80,22 @@ const { object } = await generateObject({
 - No hard deletes — status = 'deprecated' always
 - No field reaches production without approved_by + approved_at set
 - Agents only ever read status = 'production' fields — enforced at DB layer
+
+## Git Workflow — follow after every story
+
+After every story verify script passes:
+  git add .
+  git commit -m "feat(story-id): brief description"
+  git push origin main
+
+Commit message format:
+  feat(s0.2): org schema + multi-tenancy
+  feat(design.1): design system — dark mode + indigo tokens
+  fix(s0.6): hubspot pagination edge case
+  chore(infra): update env vars
+
+Rules:
+  - Never commit .env.local or node_modules
+  - Always run npm run build before pushing
+  - Push to main → Vercel auto-deploys in ~30 seconds
+  - Check production URL after every deploy

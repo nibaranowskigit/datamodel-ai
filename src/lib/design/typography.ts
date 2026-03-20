@@ -1,0 +1,15 @@
+export const typography = {
+  display: 'text-5xl font-bold tracking-tight leading-none',
+  h1: 'text-3xl font-semibold tracking-tight',
+  h2: 'text-xl font-semibold tracking-tight',
+  h3: 'text-base font-semibold',
+  h4: 'text-sm font-semibold',
+  bodyLg: 'text-base font-normal leading-relaxed',
+  body: 'text-sm font-normal leading-normal',
+  bodySm: 'text-xs font-normal leading-normal',
+  label: 'text-sm font-medium',
+  labelSm: 'text-xs font-medium',
+  caption: 'text-xs text-muted-foreground',
+  code: 'font-mono text-sm',
+  codeSm: 'font-mono text-xs',
+} as const;
