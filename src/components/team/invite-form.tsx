@@ -56,21 +56,22 @@ export function InviteForm() {
         <CardTitle className="text-base">Invite a teammate</CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <div className="flex-1 space-y-1.5">
-            <Label htmlFor="email">Email address</Label>
+        <form action={formAction} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem_auto]">
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-xs">Email address</Label>
             <Input
               id="email"
               name="email"
               type="email"
               placeholder="colleague@company.com"
+              className="h-9"
               required
             />
           </div>
-          <div className="w-full space-y-1.5 sm:w-36">
-            <Label htmlFor="role">Role</Label>
-            <Select name="role" defaultValue="org:viewer">
-              <SelectTrigger id="role" className="w-full">
+          <div className="space-y-1.5">
+            <Label htmlFor="role" className="text-xs">Role</Label>
+            <Select name="role" defaultValue="org:member">
+              <SelectTrigger id="role" className="h-9 w-full">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
@@ -80,10 +81,7 @@ export function InviteForm() {
               </SelectContent>
             </Select>
           </div>
-          <div className="shrink-0 space-y-1.5">
-            <Label className="invisible select-none" aria-hidden>
-              &nbsp;
-            </Label>
+          <div className="flex items-end">
             <SubmitButton />
           </div>
         </form>

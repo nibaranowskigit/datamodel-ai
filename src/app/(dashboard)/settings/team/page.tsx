@@ -17,6 +17,11 @@ export default async function TeamPage() {
     }),
   ]);
 
+  const currentMember = memberships.data.find(
+    (m) => m.publicUserData?.userId === userId,
+  );
+  const isAdmin = currentMember?.role === 'org:admin';
+
   const memberData = memberships.data.map((m) => ({
     id: m.id,
     role: m.role,
@@ -42,12 +47,12 @@ export default async function TeamPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8 p-8">
       <div>
-        <h1 className="text-2xl font-bold">Team</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Manage who has access to your Datamodel.ai workspace.
         </p>
       </div>
-      <InviteForm />
+      {isAdmin && <InviteForm />}
       <MemberList members={memberData} currentUserId={userId} />
       <PendingInvites invitations={invitationData} />
     </div>

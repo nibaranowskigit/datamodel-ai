@@ -9,13 +9,23 @@ export async function inviteMember(email: string, role: OrgRole) {
   const { orgId, userId } = await auth();
 
   const client = await clerkClient();
-  await client.organizations.createOrganizationInvitation({
-    organizationId: orgId!,
-    emailAddress: email,
-    role,
-    inviterUserId: userId!,
-    redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
-  });
+
+  try {
+    await client.organizations.createOrganizationInvitation({
+      organizationId: orgId!,
+      emailAddress: email,
+      role,
+      inviterUserId: userId!,
+      redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+    });
+  } catch (err: unknown) {
+    const clerkErr = err as { errors?: { code: string; message: string }[] };
+    const code = clerkErr?.errors?.[0]?.code;
+    if (code === 'duplicate_record') {
+      throw new Error('An invite has already been sent to this email address.');
+    }
+    throw new Error('Failed to send invite. Please try again.');
+  }
 
   revalidatePath('/settings/team');
 }
