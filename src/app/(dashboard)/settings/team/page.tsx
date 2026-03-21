@@ -1,12 +1,11 @@
-import { auth, clerkClient } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import { orgGuard } from '@/lib/auth';
+import { clerkClient } from '@clerk/nextjs/server';
 import { InviteForm } from '@/components/team/invite-form';
 import { MemberList } from '@/components/team/member-list';
 import { PendingInvites } from '@/components/team/pending-invites';
 
 export default async function TeamPage() {
-  const { orgId, userId } = await auth();
-  if (!orgId || !userId) redirect('/sign-in');
+  const { orgId, userId } = await orgGuard();
 
   const client = await clerkClient();
 

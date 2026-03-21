@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { orgGuard } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { orgs, dataSources } from '@/lib/db/schema';
@@ -6,8 +6,7 @@ import { eq, and, ne } from 'drizzle-orm';
 import { ConnectSourcesForm } from '@/components/onboarding/connect-sources-form';
 
 export default async function ConnectPage() {
-  const { userId, orgId } = await auth();
-  if (!userId || !orgId) redirect('/sign-in');
+  const { orgId } = await orgGuard();
 
   const org = await db.query.orgs.findFirst({ where: eq(orgs.id, orgId) });
   if (!org?.businessType) redirect('/onboarding'); // must complete step 1 first

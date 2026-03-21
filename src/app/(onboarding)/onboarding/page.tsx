@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
+import { orgGuard } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { orgs } from '@/lib/db/schema';
@@ -6,9 +6,7 @@ import { eq } from 'drizzle-orm';
 import { BusinessTypeForm } from '@/components/onboarding/business-type-form';
 
 export default async function OnboardingPage() {
-  const { userId, orgId } = await auth();
-  if (!userId) redirect('/sign-in');
-  if (!orgId) redirect('/create-org');
+  const { orgId } = await orgGuard();
 
   const org = await db.query.orgs.findFirst({
     where: eq(orgs.id, orgId),

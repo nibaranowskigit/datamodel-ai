@@ -4,8 +4,9 @@ import { CreateOrganization } from '@clerk/nextjs';
 import { PlanIntentBridge } from '@/components/auth/plan-intent-bridge';
 
 export default async function CreateOrgPage() {
-  const { userId } = await auth();
+  const { userId, orgId } = await auth();
   if (!userId) redirect('/sign-in');
+  if (orgId) redirect('/onboarding');
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-6">

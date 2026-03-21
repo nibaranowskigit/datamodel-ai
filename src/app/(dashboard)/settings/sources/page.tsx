@@ -1,5 +1,4 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import { orgGuard } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { dataSources } from '@/lib/db/schema';
 import { and, eq, ne } from 'drizzle-orm';
@@ -14,8 +13,7 @@ const STATUS_LABELS: Record<string, { label: string; variant: 'default' | 'secon
 };
 
 export default async function SourcesPage() {
-  const { userId, orgId } = await auth();
-  if (!userId || !orgId) redirect('/sign-in');
+  const { orgId } = await orgGuard();
 
   const sources = await db.query.dataSources.findMany({
     where: and(
