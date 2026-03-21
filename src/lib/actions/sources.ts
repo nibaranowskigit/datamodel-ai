@@ -51,9 +51,9 @@ export async function connectSource(input: {
   revalidatePath('/settings/sources');
 }
 
-// Disconnect a source — soft delete, purge credentials
+// Disconnect a source — soft delete, purge credentials — Admin only (destructive)
 export async function disconnectSource(sourceId: string) {
-  await requireRole('org:member');
+  await requireRole('org:admin');
   const { orgId } = await getAuth();
 
   const source = await db.query.dataSources.findFirst({
