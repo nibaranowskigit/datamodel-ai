@@ -53,7 +53,7 @@ export default async function TeamPage() {
         </p>
       </div>
       {isAdmin && <InviteForm />}
-      <MemberList members={memberData} currentUserId={userId} />
+      <MemberList members={memberData} currentUserId={userId} isAdmin={isAdmin} />
       <PendingInvites invitations={invitationData} />
     </div>
   );

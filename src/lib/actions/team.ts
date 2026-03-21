@@ -91,7 +91,7 @@ export async function removeMember(targetUserId: string) {
   );
 
   if (isTargetAdmin && adminMemberships.data.length <= 1) {
-    throw new Error('Org must have at least one Admin');
+    throw new Error('Cannot remove the last Admin. Assign another Admin first.');
   }
 
   await client.organizations.deleteOrganizationMembership({

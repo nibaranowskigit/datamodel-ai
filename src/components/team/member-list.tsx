@@ -1,6 +1,10 @@
+'use client';
+
+import { useState } from 'react';
 import { removeMember } from '@/lib/actions/team';
-import { Badge } from '@/components/ui/badge';
+import { RoleBadge } from '@/components/team/role-badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -9,22 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-type MemberRole = string;
-
-const ROLE_META: Record<
-  string,
-  { label: string; variant: 'default' | 'secondary' | 'outline' }
-> = {
-  'org:admin': { label: 'Admin', variant: 'default' },
-  'org:member': { label: 'Member', variant: 'secondary' },
-  'org:viewer': { label: 'Viewer', variant: 'outline' },
-};
+import { cn } from '@/lib/utils';
 
 type MemberData = {
   id: string;
-  role: MemberRole;
+  role: string;
   createdAt: number;
   publicUserData: {
     userId: string;
@@ -38,11 +31,21 @@ type MemberData = {
 type Props = {
   members: MemberData[];
   currentUserId: string;
+  isAdmin: boolean;
 };
 
-function RoleBadge({ role }: { role: string }) {
-  const meta = ROLE_META[role] ?? { label: role, variant: 'outline' as const };
-  return <Badge variant={meta.variant}>{meta.label}</Badge>;
+const ROLE_ORDER: Record<string, number> = {
+  'org:admin': 0,
+  'org:member': 1,
+  'org:viewer': 2,
+};
+
+function displayName(member: MemberData): string {
+  const { firstName, lastName, identifier } = member.publicUserData ?? {};
+  if (firstName || lastName) {
+    return [firstName, lastName].filter(Boolean).join(' ');
+  }
+  return identifier ?? '—';
 }
 
 function formatDate(timestamp: number) {
@@ -53,21 +56,42 @@ function formatDate(timestamp: number) {
   });
 }
 
-function displayName(member: MemberData): string {
-  const { firstName, lastName, identifier } = member.publicUserData ?? {};
-  if (firstName || lastName) {
-    return [firstName, lastName].filter(Boolean).join(' ');
-  }
-  return identifier ?? '—';
-}
+export function MemberList({ members, currentUserId, isAdmin }: Props) {
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-export function MemberList({ members, currentUserId }: Props) {
+  async function handleRemove(targetUserId: string) {
+    setLoadingId(targetUserId);
+    setError('');
+    try {
+      await removeMember(targetUserId);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to remove member.';
+      setError(msg);
+    } finally {
+      setLoadingId(null);
+    }
+  }
+
+  const sorted = [...members].sort((a, b) => {
+    const aIsMe = a.publicUserData?.userId === currentUserId;
+    const bIsMe = b.publicUserData?.userId === currentUserId;
+    if (aIsMe) return -1;
+    if (bIsMe) return 1;
+    return (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9);
+  });
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Team Members ({members.length})</CardTitle>
+        <CardTitle className="text-base">
+          Team Members ({members.length})
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
+        {error && (
+          <p className="px-4 pb-3 text-xs text-destructive">{error}</p>
+        )}
         <Table>
           <TableHeader>
             <TableRow>
@@ -79,13 +103,15 @@ export function MemberList({ members, currentUserId }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.map((member) => {
-              const targetUserId = member.publicUserData?.userId;
-              const isSelf = targetUserId === currentUserId;
-              const removeWithId = removeMember.bind(null, targetUserId ?? '');
+            {sorted.map((member) => {
+              const memberUserId = member.publicUserData?.userId ?? '';
+              const isMe = memberUserId === currentUserId;
 
               return (
-                <TableRow key={member.id}>
+                <TableRow
+                  key={member.id}
+                  className={cn(isMe && 'bg-muted/40')}
+                >
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2.5">
                       {member.publicUserData?.imageUrl && (
@@ -97,6 +123,9 @@ export function MemberList({ members, currentUserId }: Props) {
                         />
                       )}
                       <span>{displayName(member)}</span>
+                      {isMe && (
+                        <span className="text-xs text-muted-foreground">(you)</span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
@@ -109,17 +138,16 @@ export function MemberList({ members, currentUserId }: Props) {
                     {formatDate(member.createdAt)}
                   </TableCell>
                   <TableCell>
-                    {!isSelf && targetUserId && (
-                      <form action={removeWithId}>
-                        <Button
-                          type="submit"
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive"
-                        >
-                          Remove
-                        </Button>
-                      </form>
+                    {isAdmin && !isMe && memberUserId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={loadingId === memberUserId}
+                        onClick={() => handleRemove(memberUserId)}
+                        className="text-muted-foreground hover:text-destructive h-7 px-2"
+                      >
+                        {loadingId === memberUserId ? '…' : 'Remove'}
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>
