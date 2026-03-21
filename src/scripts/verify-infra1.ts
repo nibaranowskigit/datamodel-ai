@@ -1,6 +1,8 @@
 // src/scripts/verify-infra1.ts
 // Run: npm run verify src/scripts/verify-infra1.ts
 
+export {};
+
 async function run() {
   let passed = 0;
   let failed = 0;
