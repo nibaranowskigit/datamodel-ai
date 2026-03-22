@@ -78,3 +78,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] `/settings` redirects to `/settings/profile`
 - [ ] Active nav item highlighted on each route
 - [ ] Non-admin cannot access `/settings/danger`
+
+---
+
+## SETTINGS.2 — Org Profile Settings
+
+- [ ] Visit `/settings/profile` as Admin — org name, business type, vertical, and stage are pre-filled with current values
+- [ ] Update org name → save → confirm new name appears in DB and in Clerk dashboard org switcher
+- [ ] Change vertical → save → confirm `orgs.vertical` updated in DB
+- [ ] Change stage → save → confirm `orgs.stage` updated in DB
+- [ ] Change business type B2B → B2C → inline warning appears, vertical resets to placeholder
+- [ ] Save B2C business type → confirm `orgs.business_type` is `b2c` in DB
+- [ ] Visit `/settings/profile` as non-Admin (org:member or org:viewer) → read-only card shown, no form controls, "Contact an Admin to make changes." visible
+- [ ] "Changes saved." confirmation appears for ~3 seconds after successful save
+- [ ] Save button disabled when no fields have changed (isDirty = false)
+- [ ] Submit with empty org name → error "Org name cannot be empty." shown inline
