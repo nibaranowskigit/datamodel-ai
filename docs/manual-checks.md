@@ -142,3 +142,22 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] After revoke confirmed — key disappears from list
 - [ ] Non-Admin sees key list but no Create/Rotate/Revoke buttons
 - [ ] Empty state shows correct message for Admin vs non-Admin
+
+---
+
+## SETTINGS.6 — Danger Zone
+
+- [ ] /settings/danger loads for Admin without error
+- [ ] Non-Admin visiting /settings/danger gets redirected to /settings/profile
+- [ ] All three action cards visible with descriptions
+- [ ] Clicking "Export data" expands the card with confirmation input
+- [ ] "Export data" button disabled until "export data" is typed exactly
+- [ ] After confirming export — "Export requested. Check your email" message shown
+- [ ] Export email received with JSON attachment within 2 minutes
+- [ ] JSON export contains org, cdmRecords, udmRecords, syncLogs
+- [ ] Clicking "Hard reset" requires typing "reset data model"
+- [ ] After hard reset — CDM/UDM records gone, sources and API keys intact
+- [ ] Clicking "Delete organisation" requires typing "delete my org"
+- [ ] After delete org — redirected to /create-org, all data gone
+- [ ] Confirmation input is case-insensitive ("Export Data" also works)
+- [ ] Only one action card expanded at a time

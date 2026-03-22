@@ -1,5 +1,6 @@
 // src/scripts/verify-user4.ts
 // Run: npx tsx src/scripts/verify-user4.ts
+export {};
 
 async function run() {
   let passed = 0;

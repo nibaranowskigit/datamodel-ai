@@ -1,5 +1,6 @@
 // src/scripts/verify-user3.ts
 // Run: npm run verify src/scripts/verify-user3.ts
+export {};
 
 async function run() {
   let passed = 0;
