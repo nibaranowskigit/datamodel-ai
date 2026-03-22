@@ -45,10 +45,10 @@ export default async function TeamPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-8">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h2 className="text-base font-semibold tracking-tight">Team</h2>
+        <p className="text-sm text-muted-foreground mt-1">
           Manage who has access to your Datamodel.ai workspace.
         </p>
       </div>

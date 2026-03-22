@@ -1,0 +1,26 @@
+---
+description: Append manual checks to docs/manual-checks.md after every verify script passes
+alwaysApply: true
+---
+
+# Manual Checks Workflow
+
+After every story's verify script passes, append its manual checks to `docs/manual-checks.md`.
+
+## Format
+
+```markdown
+## [STORY-ID] — [Story Title]
+
+- [ ] manual check 1
+- [ ] manual check 2
+- [ ] manual check 3
+```
+
+## Rules
+
+- Always append — never overwrite existing entries
+- Use the exact story ID from the PRD (e.g. `SETTINGS.1`, `USER.3`, `S0.7`)
+- Only include checks that require a live browser, real email, Inngest UI, or production environment — not things the verify script already covers
+- Separate sections with `---`
+- Create `docs/manual-checks.md` if it does not exist

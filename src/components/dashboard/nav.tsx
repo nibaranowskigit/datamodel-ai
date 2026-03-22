@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Database, Users } from 'lucide-react';
+import { LayoutDashboard, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Sources', href: '/settings/sources', icon: Database },
-  { label: 'Team', href: '/settings/team', icon: Users },
+  { label: 'Settings',  href: '/settings',  icon: Settings },
 ] as const;
 
 export function DashboardNav() {
