@@ -110,3 +110,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Non-Admin sees list but no Disconnect/Reconnect buttons
 - [ ] Empty state shown when no sources connected
 - [ ] connectionConfig never visible in browser DevTools network tab
+
+---
+
+## SETTINGS.4 — Notification Preferences
+
+- [ ] /settings/notifications loads without error
+- [ ] All 4 notification types visible with toggles
+- [ ] Sync failures: ON by default
+- [ ] Field approvals: ON by default
+- [ ] Billing alerts: ON by default
+- [ ] Weekly digest: OFF by default
+- [ ] Toggling a switch saves immediately — no Save button needed
+- [ ] Reload page — toggled preferences persist correctly
+- [ ] "Settings apply to your account only" copy visible
+- [ ] Switch component renders correctly in dark mode
