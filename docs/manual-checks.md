@@ -93,3 +93,20 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] "Changes saved." confirmation appears for ~3 seconds after successful save
 - [ ] Save button disabled when no fields have changed (isDirty = false)
 - [ ] Submit with empty org name → error "Org name cannot be empty." shown inline
+
+---
+
+## SETTINGS.3 — Connected Sources Management
+
+- [ ] `/settings/sources` loads without error
+- [ ] All connected sources visible with correct status badges (Active/Pending/Error)
+- [ ] Error source shows red badge and error message text
+- [ ] Last sync time shown as relative time ("2h ago" / "Never")
+- [ ] Disconnect button triggers two-step confirmation ("Sure? Yes No")
+- [ ] After confirming disconnect — source disappears from list
+- [ ] Reconnect button visible on Error/Pending sources (Admin only)
+- [ ] Reconnect form expands inline with correct credential fields for that source type
+- [ ] After saving reconnect credentials — status resets to Pending
+- [ ] Non-Admin sees list but no Disconnect/Reconnect buttons
+- [ ] Empty state shown when no sources connected
+- [ ] connectionConfig never visible in browser DevTools network tab

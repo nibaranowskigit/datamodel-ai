@@ -77,6 +77,41 @@ export async function disconnectSource(sourceId: string) {
   revalidatePath('/settings/sources');
 }
 
+// Reconnect an existing source with new credentials — Admin only
+export async function reconnectSource(input: {
+  sourceId: string;
+  config: Record<string, string>;
+}) {
+  await requireRole('org:admin');
+  const { orgId } = await getAuth();
+
+  const source = await db.query.dataSources.findFirst({
+    where: and(
+      eq(dataSources.id, input.sourceId),
+      eq(dataSources.orgId, orgId)
+    ),
+  });
+
+  if (!source) throw new Error('Source not found.');
+
+  const encryptedConfig = encrypt(JSON.stringify(input.config));
+
+  await db
+    .update(dataSources)
+    .set({
+      connectionConfig: encryptedConfig,
+      status: 'pending',
+      lastSyncError: null,
+      updatedAt: new Date(),
+    })
+    .where(and(
+      eq(dataSources.id, input.sourceId),
+      eq(dataSources.orgId, orgId)
+    ));
+
+  revalidatePath('/settings/sources');
+}
+
 // Get all active/pending sources for an org — no credentials returned
 export async function getActiveSources(orgId: string) {
   return db.query.dataSources.findMany({
