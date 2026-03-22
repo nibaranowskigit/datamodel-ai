@@ -125,3 +125,20 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Reload page — toggled preferences persist correctly
 - [ ] "Settings apply to your account only" copy visible
 - [ ] Switch component renders correctly in dark mode
+
+---
+
+## SETTINGS.5 — API Keys Management
+
+- [ ] /settings/api-keys loads without error
+- [ ] "Create key" form visible for Admin, hidden for non-Admin
+- [ ] Create a key → one-time modal opens with full key visible
+- [ ] "Done" button disabled until "I've copied this key" checkbox checked
+- [ ] After closing modal — key only shows prefix in list (dm_live_xxxx…)
+- [ ] keyHash never visible in browser DevTools network tab
+- [ ] "Never used" shown for newly created keys
+- [ ] Rotate button → old key gone → new modal with new key prefix
+- [ ] Revoke triggers two-step confirmation ("Sure? Yes No")
+- [ ] After revoke confirmed — key disappears from list
+- [ ] Non-Admin sees key list but no Create/Rotate/Revoke buttons
+- [ ] Empty state shows correct message for Admin vs non-Admin

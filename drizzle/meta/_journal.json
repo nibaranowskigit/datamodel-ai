@@ -43,6 +43,13 @@
       "when": 1774171035194,
       "tag": "0005_mixed_lucky_pierre",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774171401266,
+      "tag": "0006_talented_songbird",
+      "breakpoints": true
     }
   ]
 }
