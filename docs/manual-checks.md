@@ -271,3 +271,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Invalid API key → testConnection returns error, sync does not proceed
 - [ ] Sync log written to DB after run
 - [ ] Org with > 100 Stripe customers — all pages synced (autoPagingEach)
+
+---
+
+## S1.2 — Intercom Connector
+
+- [ ] Connect Intercom via /settings/sources with access token — status shows Pending
+- [ ] Trigger sync — status changes to Active
+- [ ] UDM records show SUP_open_tickets, SUP_csat_score, SUP_last_contact_date
+- [ ] Contact with no conversations → SUP_ fields are 0 or null (no crash)
+- [ ] Contact matched by email to existing HubSpot/Stripe UDM record
+- [ ] Fused UDM record has HS_ + FIN_ + SUP_ fields on same record
+- [ ] CDM shows SUP_avg_csat and SUP_total_open_tickets
+- [ ] Invalid access token → testConnection returns error, sync does not proceed
+- [ ] Sync log written to DB after run
+- [ ] Org with > 150 contacts — all pages synced (cursor-based pagination)
