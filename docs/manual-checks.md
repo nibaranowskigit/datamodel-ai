@@ -304,3 +304,20 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Invalid credentials → testConnection fails with error in /settings/sources
 - [ ] Sync log written to DB after run
 - [ ] Org with > 1000 Mixpanel profiles — all pages synced (session_id pagination)
+
+---
+
+## S1.4 — Multi-Source Orchestration
+
+- [ ] Send `org/sync.requested` event manually → all active sources fan out in parallel
+- [ ] Inngest dashboard shows parallel source steps running simultaneously
+- [ ] One source with invalid creds → that source errors, others complete successfully
+- [ ] `sync_runs` row created with `status = 'running'` at start of sync
+- [ ] `sync_runs` row updated to `'completed'` / `'partial'` / `'failed'` after all sources settle
+- [ ] `sync_logs` rows written per source, each linked to `sync_run_id`
+- [ ] Reconciliation step fires after all sources settle (not mid-fan-out)
+- [ ] Field proposals generated after reconciliation completes
+- [ ] `/settings/sources` shows correct per-source status after a mixed result (partial)
+- [ ] Old per-source `syncSourceJob` still appears in Inngest dashboard (preserved for manual triggers)
+- [ ] `orchestrateSync` cron appears in Inngest dashboard as `orchestrate-sync`
+- [ ] `syncOrgSources` function appears in Inngest dashboard as `sync-org-sources`

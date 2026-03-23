@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, integer, pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { orgs } from './orgs';
+import { syncRuns } from './sync-runs';
 
 export const syncStatusEnum = pgEnum('sync_status', [
   'running',
@@ -12,6 +13,7 @@ export const syncStatusEnum = pgEnum('sync_status', [
 export const syncLogs = pgTable('sync_logs', {
   id:              text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   orgId:           text('org_id').notNull().references(() => orgs.id),
+  syncRunId:       text('sync_run_id').references(() => syncRuns.id),
   sourceType:      text('source_type').notNull(),
   status:          syncStatusEnum('status').notNull(),
   recordsUpserted: integer('records_upserted').default(0),
@@ -23,7 +25,8 @@ export const syncLogs = pgTable('sync_logs', {
 });
 
 export const syncLogsRelations = relations(syncLogs, ({ one }) => ({
-  org: one(orgs, { fields: [syncLogs.orgId], references: [orgs.id] }),
+  org:     one(orgs,      { fields: [syncLogs.orgId],     references: [orgs.id] }),
+  syncRun: one(syncRuns,  { fields: [syncLogs.syncRunId], references: [syncRuns.id] }),
 }));
 
 export type SyncLog    = typeof syncLogs.$inferSelect;

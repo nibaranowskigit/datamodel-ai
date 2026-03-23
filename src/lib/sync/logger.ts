@@ -5,13 +5,15 @@ import { eq } from 'drizzle-orm';
 export async function createSyncLog(input: {
   orgId: string;
   sourceType: string;
+  syncRunId?: string;
 }): Promise<string> {
   const [log] = await db
     .insert(syncLogs)
     .values({
-      orgId: input.orgId,
+      orgId:      input.orgId,
       sourceType: input.sourceType,
-      status: 'running',
+      syncRunId:  input.syncRunId ?? null,
+      status:     'running',
     })
     .returning({ id: syncLogs.id });
   return log.id;

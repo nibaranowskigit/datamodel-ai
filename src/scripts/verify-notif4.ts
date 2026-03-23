@@ -1,5 +1,6 @@
 // src/scripts/verify-notif4.ts
 // Run: npm run verify src/scripts/verify-notif4.ts
+export {};
 
 async function run() {
   let passed = 0;
