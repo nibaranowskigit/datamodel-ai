@@ -212,3 +212,16 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] In-app notification record visible in DB (notifications table)
 - [ ] Toggle sync_failure OFF for test user → re-trigger failure → no email received
 - [ ] Inngest retry of same sync job → no duplicate email (dedup working)
+
+---
+
+## NOTIF.3 — Field Approval Needed
+
+- [ ] Trigger AI proposal run with new fields → email received within 60s
+- [ ] Email subject includes field count and source name
+- [ ] Email body describes what needs reviewing
+- [ ] Email CTA links to /fields
+- [ ] In-app notification record created in DB
+- [ ] Run with 0 new proposals → no email fired
+- [ ] Toggle field_approval OFF → re-trigger → no email received
+- [ ] Inngest retry of same proposal run → no duplicate email

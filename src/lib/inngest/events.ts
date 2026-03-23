@@ -15,9 +15,22 @@ export type OrgDataExportRequestedEvent = {
   };
 };
 
+export type FieldsProposalRequestedEvent = {
+  name: 'fields/proposal.requested';
+  data: {
+    orgId: string;
+    sourceId: string;
+    sourceType: string;
+    syncRunId: string;
+  };
+};
+
 // Future events (S1.4)
 // sync/all.requested
 // sync/source.completed
 // sync/source.failed
 
-export type DatamodelEvents = SyncSourceRequestedEvent | OrgDataExportRequestedEvent;
+export type DatamodelEvents =
+  | SyncSourceRequestedEvent
+  | OrgDataExportRequestedEvent
+  | FieldsProposalRequestedEvent;
