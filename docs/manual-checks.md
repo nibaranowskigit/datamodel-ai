@@ -199,3 +199,16 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] All 4 template types render without errors (sync_failure, field_approval, billing, weekly_digest)
 - [ ] RESEND_API_KEY set in both .env.local and Vercel env vars
 - [ ] Emails sent from notifications@datamodel.ai (not test address)
+
+---
+
+## NOTIF.2 — Sync Failure Alerts
+
+- [ ] Trigger a sync failure (use invalid API key on a connected source)
+- [ ] Email received within 60 seconds of failure
+- [ ] Email subject contains the source name (e.g. "HubSpot sync failed")
+- [ ] Email body contains the actual error message
+- [ ] Email CTA links to /settings/sources
+- [ ] In-app notification record visible in DB (notifications table)
+- [ ] Toggle sync_failure OFF for test user → re-trigger failure → no email received
+- [ ] Inngest retry of same sync job → no duplicate email (dedup working)

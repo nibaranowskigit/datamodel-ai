@@ -6,6 +6,7 @@ import { getConnector } from '@/lib/connectors/registry';
 import { getDecryptedConfig } from '@/lib/connectors/config';
 import { createSyncLog, completeSyncLog, failSyncLog } from '@/lib/sync/logger';
 import type { ConnectorConfig, SyncResult } from '@/lib/connectors/types';
+import { notifySyncFailure } from '@/lib/notifications/notify-sync-failure';
 
 export const syncSourceJob = inngest.createFunction(
   {
@@ -67,7 +68,7 @@ export const syncSourceJob = inngest.createFunction(
         });
       });
     } catch (err) {
-      // Step 5a — handle failure
+      // Step 5a — record failure in sync log + data_sources
       await step.run('handle-failure', async () => {
         const durationMs = Date.now() - startedAt;
         await Promise.all([
@@ -84,6 +85,19 @@ export const syncSourceJob = inngest.createFunction(
             )),
         ]);
       });
+
+      // Step 5b — notify opted-in org members (NOTIF.2)
+      // Runs after the log is written so users are never alerted without a record.
+      // Wrapped in step.run for Inngest observability + per-step retry isolation.
+      await step.run('notify-sync-failure', async () => {
+        await notifySyncFailure({
+          orgId,
+          sourceType,
+          errorMessage: (err as Error).message,
+          syncLogId: logId,
+        });
+      });
+
       throw err; // re-throw so Inngest marks the run as failed
     }
 
