@@ -241,3 +241,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Admin with billing notifications OFF receives nothing
 - [ ] All billing emails CTA links correctly to /settings/billing
 - [ ] In-app notification record created in DB for each event
+
+---
+
+## NOTIF.5 — Weekly Digest
+
+- [ ] Trigger cron manually via Inngest dev server — digest fires
+- [ ] Email received for opted-in member (weekly_digest = true)
+- [ ] Email contains sync run summary (count + success/fail split)
+- [ ] Email contains field approval counts (approved + pending)
+- [ ] Email contains health score if available (omitted if null / S3.4 not done)
+- [ ] No email sent when hasActivity = false (zero syncs + zero field changes)
+- [ ] Member with weekly_digest = false receives nothing
+- [ ] Digest skipped for org with no activity last 7 days
+- [ ] "Review now" link in email points to /fields when fields pending
+- [ ] In-app notification record created in DB for each opted-in member
