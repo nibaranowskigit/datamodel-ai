@@ -256,3 +256,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Digest skipped for org with no activity last 7 days
 - [ ] "Review now" link in email points to /fields when fields pending
 - [ ] In-app notification record created in DB for each opted-in member
+
+---
+
+## S1.1 — Stripe Connector
+
+- [ ] Connect Stripe via /settings/sources with test secret key — status shows Pending
+- [ ] Trigger sync — status changes to Active
+- [ ] UDM records visible with FIN_ fields populated
+- [ ] FIN_mrr, FIN_subscription_status, FIN_plan_name all have values
+- [ ] Customer with no subscription → FIN_ fields null (record still exists)
+- [ ] CDM shows FIN_total_mrr and FIN_active_subscribers (B2B orgs only)
+- [ ] Stripe customer with matching HubSpot email → single UDM record with both HS_ and FIN_ fields
+- [ ] Invalid API key → testConnection returns error, sync does not proceed
+- [ ] Sync log written to DB after run
+- [ ] Org with > 100 Stripe customers — all pages synced (autoPagingEach)
