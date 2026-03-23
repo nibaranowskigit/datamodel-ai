@@ -15,6 +15,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.58",
     "@clerk/nextjs": "^7.0.5",
+    "@react-email/components": "^1.0.10",
     "ai": "^6.0.116",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -28,6 +29,7 @@
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-email": "^5.2.10",
     "resend": "^6.9.4",
     "shadcn": "^4.0.8",
     "sonner": "^2.0.7",

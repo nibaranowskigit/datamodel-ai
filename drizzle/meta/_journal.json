@@ -50,6 +50,13 @@
       "when": 1774171401266,
       "tag": "0006_talented_songbird",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774250432017,
+      "tag": "0007_pale_sharon_carter",
+      "breakpoints": true
     }
   ]
 }

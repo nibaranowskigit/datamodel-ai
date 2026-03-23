@@ -6,3 +6,4 @@ export * from './records';
 export * from './sync-logs';
 export * from './notification-preferences';
 export * from './api-keys';
+export * from './notifications';

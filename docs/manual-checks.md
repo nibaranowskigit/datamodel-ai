@@ -161,3 +161,41 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] After delete org — redirected to /create-org, all data gone
 - [ ] Confirmation input is case-insensitive ("Export Data" also works)
 - [ ] Only one action card expanded at a time
+
+---
+
+## DESIGN.3 — Form Vertical Alignment
+
+- [ ] /settings/team — invite form: email label and role label tops are flush
+- [ ] /settings/team — invite form: input, select, button bottoms are flush
+- [ ] /settings/api-keys — key name input and create button fully aligned
+- [ ] DevTools: invisible label has visibility:hidden, not display:none (takes up space)
+- [ ] No inline form has a floating button above or below the input baseline
+
+---
+
+## SETTINGS.7 — User Avatar + Profile + Sign Out
+
+- [ ] Avatar button visible in top-right corner of dashboard on every page
+- [ ] Clicking avatar opens dropdown with full name + email
+- [ ] Dropdown shows "Your profile" link and "Sign out" button
+- [ ] "Your profile" navigates to /settings/me
+- [ ] "Sign out" logs out and redirects to /sign-in
+- [ ] Clicking outside dropdown closes it
+- [ ] Pressing Escape closes dropdown
+- [ ] /settings/me shows avatar (or initials fallback), name, read-only email
+- [ ] Updating first/last name saves and reflects in avatar dropdown immediately
+- [ ] No Clerk avatar set → initials shown in button
+
+---
+
+## NOTIF.1 — Notification Infrastructure
+
+- [ ] Test notify() call from Inngest → email received in inbox
+- [ ] Email renders correctly: dark background, Datamodel.ai header, teal CTA button
+- [ ] "Manage preferences" link in email footer points to /settings/notifications
+- [ ] In-app notification record created in DB after notify() call
+- [ ] shouldNotify() = false → no email sent AND no DB record created
+- [ ] All 4 template types render without errors (sync_failure, field_approval, billing, weekly_digest)
+- [ ] RESEND_API_KEY set in both .env.local and Vercel env vars
+- [ ] Emails sent from notifications@datamodel.ai (not test address)
