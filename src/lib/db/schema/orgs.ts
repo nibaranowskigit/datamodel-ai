@@ -13,6 +13,7 @@ export const orgs = pgTable('orgs', {
   plan: orgPlanEnum('plan').default('free').notNull(),
   status: orgStatusEnum('status').default('active').notNull(),
   clerkOrgId: text('clerk_org_id').notNull().unique(),
+  stripeCustomerId: text('stripe_customer_id').unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

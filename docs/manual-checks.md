@@ -225,3 +225,19 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Run with 0 new proposals → no email fired
 - [ ] Toggle field_approval OFF → re-trigger → no email received
 - [ ] Inngest retry of same proposal run → no duplicate email
+
+---
+
+## NOTIF.4 — Billing Notifications
+
+- [ ] stripe trigger invoice.payment_succeeded → Admin receives payment confirmation email
+- [ ] Payment success email shows correct amount and card last 4
+- [ ] stripe trigger invoice.payment_failed → Admin receives payment failed email
+- [ ] Payment failed email shows failure reason and links to /settings/billing
+- [ ] stripe trigger customer.subscription.trial_will_end → trial ending email received
+- [ ] Trial ending email shows correct days remaining
+- [ ] stripe trigger customer.subscription.deleted → cancellation email received
+- [ ] Non-Admin member in same org receives NO billing emails
+- [ ] Admin with billing notifications OFF receives nothing
+- [ ] All billing emails CTA links correctly to /settings/billing
+- [ ] In-app notification record created in DB for each event

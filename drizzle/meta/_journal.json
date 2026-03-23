@@ -57,6 +57,13 @@
       "when": 1774250432017,
       "tag": "0007_pale_sharon_carter",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774251788261,
+      "tag": "0008_notif4_stripe_customer_id",
+      "breakpoints": true
     }
   ]
 }
