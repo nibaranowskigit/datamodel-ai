@@ -28,9 +28,10 @@ export const TIER_1_SOURCES = [
     label: 'Mixpanel',
     description: 'DAU, feature events, activation',
     fields: [
-      { key: 'projectToken',           label: 'Project Token',            type: 'text' as const },
-      { key: 'serviceAccountUsername', label: 'Service Account Username', type: 'text' as const },
-      { key: 'serviceAccountSecret',   label: 'Service Account Secret',   type: 'password' as const },
+      { key: 'projectToken',           label: 'Project Token',                        type: 'text' as const },
+      { key: 'serviceAccountUsername', label: 'Service Account Username',             type: 'text' as const },
+      { key: 'serviceAccountSecret',   label: 'Service Account Secret',               type: 'password' as const },
+      { key: 'activationEvent',        label: 'Activation event name (optional)',     type: 'text' as const },
     ],
   },
 ] as const;

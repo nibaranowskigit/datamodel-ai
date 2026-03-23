@@ -286,3 +286,21 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Invalid access token → testConnection returns error, sync does not proceed
 - [ ] Sync log written to DB after run
 - [ ] Org with > 150 contacts — all pages synced (cursor-based pagination)
+
+---
+
+## S1.3 — Mixpanel Connector
+
+- [ ] Connect Mixpanel via /settings/sources — status shows Pending
+- [ ] Trigger sync — status changes to Active
+- [ ] UDM records show PROD_last_seen, PROD_activated, PROD_session_count_30d
+- [ ] PROD_days_since_last_seen correctly computed (e.g. 3 days ago = 3)
+- [ ] Profile with no email skipped — logged in sync errors, no crash
+- [ ] Profile with no $last_seen → PROD_last_seen null (no crash)
+- [ ] activationEvent configured → PROD_activated true/false populated
+- [ ] activationEvent blank → PROD_activated null for all records
+- [ ] CDM shows PROD_mau, PROD_dau, PROD_activation_rate
+- [ ] Fused UDM record: user@acme.com has HS_ + FIN_ + SUP_ + PROD_ fields
+- [ ] Invalid credentials → testConnection fails with error in /settings/sources
+- [ ] Sync log written to DB after run
+- [ ] Org with > 1000 Mixpanel profiles — all pages synced (session_id pagination)

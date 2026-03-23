@@ -15,6 +15,7 @@ export type MixpanelConfig = {
   projectToken: string;
   serviceAccountUsername: string;
   serviceAccountSecret: string;
+  activationEvent?: string;  // e.g. 'Project Created' — configurable per org
 };
 
 export type ConnectorConfig =
