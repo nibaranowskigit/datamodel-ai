@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { cdmRecords, cdmFieldValues, cdmConflicts, orgs, udmFields } from '@/lib/db/schema';
+import { cdmRecords, cdmFieldValues, orgs, udmFields } from '@/lib/db/schema';
 import { and, eq, count } from 'drizzle-orm';
 
 async function assertB2BOrg(orgId: string) {
@@ -69,21 +69,6 @@ export async function upsertCdmFieldValue(input: {
   });
 
   if (existing) {
-    if (
-      existing.sourceType !== input.sourceType &&
-      JSON.stringify(existing.value) !== JSON.stringify(input.value)
-    ) {
-      await db.insert(cdmConflicts).values({
-        recordId: input.recordId,
-        orgId: input.orgId,
-        fieldKey: input.fieldKey,
-        sourceA: existing.sourceType,
-        valueA: existing.value,
-        sourceB: input.sourceType,
-        valueB: input.value,
-      });
-    }
-
     await db
       .update(cdmFieldValues)
       .set({

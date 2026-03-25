@@ -321,3 +321,23 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Old per-source `syncSourceJob` still appears in Inngest dashboard (preserved for manual triggers)
 - [ ] `orchestrateSync` cron appears in Inngest dashboard as `orchestrate-sync`
 - [ ] `syncOrgSources` function appears in Inngest dashboard as `sync-org-sources`
+
+---
+
+## S1.5 — Reconciliation Engine
+
+- [ ] Run full multi-source sync — `reconcileUDMRecords()` called after fan-out
+- [ ] UDM record for matched email has field values from all 4 sources merged on primary record
+- [ ] "Acme Corp" (HubSpot) and "ACME CORP" (Intercom) — NOT flagged as conflict
+- [ ] "Acme Corp" (HubSpot) and "Acme Inc" (Intercom) — IS flagged as conflict
+- [ ] `cdm_conflicts` table has rows after sync with real data
+- [ ] `/conflicts` page loads and shows unresolved conflicts
+- [ ] Conflict shows both values + source labels
+- [ ] Clicking "Use this" resolves conflict — disappears from list
+- [ ] Resolved conflict writes correct value to UDM field value on master record
+- [ ] `reconciliation_rules` seeded for new org — all 4 namespaces present
+- [ ] HubSpot wins on `HS_` fields by default (priority 1)
+- [ ] Stripe wins on `FIN_` fields by default (priority 1)
+- [ ] Open conflict count appears on sidebar (Conflicts) and dashboard stat when conflicts exist
+- [ ] `/settings/sources` shows destructive badge linking to `/conflicts` when count > 0
+- [ ] `/settings/reconciliation` lists per-namespace priority; admin can change ranks and save — next sync uses new winners

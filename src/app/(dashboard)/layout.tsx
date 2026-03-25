@@ -3,7 +3,9 @@ import { redirect } from 'next/navigation';
 import { db } from '@/lib/db';
 import { orgs } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { countOpenConflicts } from '@/lib/conflicts/open-count';
 import { DashboardNav } from '@/components/dashboard/nav';
+import { UserAvatarButton } from '@/components/dashboard/user-avatar-button';
 
 export default async function DashboardLayout({
   children,
@@ -13,9 +15,12 @@ export default async function DashboardLayout({
   const { userId, orgId } = await auth();
   if (!userId || !orgId) redirect('/sign-in');
 
-  const org = await db.query.orgs.findFirst({
-    where: eq(orgs.id, orgId),
-  });
+  const [org, openConflictCount] = await Promise.all([
+    db.query.orgs.findFirst({
+      where: eq(orgs.id, orgId),
+    }),
+    countOpenConflicts(orgId),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -31,12 +36,15 @@ export default async function DashboardLayout({
             <span className="text-xs text-muted-foreground font-mono">{org.name}</span>
           </>
         )}
+        <div className="ml-auto flex items-center">
+          <UserAvatarButton />
+        </div>
       </header>
 
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <aside className="w-48 border-r border-border bg-card shrink-0 flex flex-col">
-          <DashboardNav />
+          <DashboardNav openConflictCount={openConflictCount} />
         </aside>
 
         {/* Main content */}

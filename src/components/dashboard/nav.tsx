@@ -2,21 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Settings } from 'lucide-react';
+import { LayoutDashboard, Settings, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Settings',  href: '/settings',  icon: Settings },
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, badgeCount: false as const },
+  { label: 'Conflicts', href: '/conflicts', icon: AlertTriangle, badgeCount: true as const },
+  { label: 'Settings', href: '/settings', icon: Settings, badgeCount: false as const },
 ] as const;
 
-export function DashboardNav() {
+export function DashboardNav({ openConflictCount = 0 }: { openConflictCount?: number }) {
   const pathname = usePathname();
 
   return (
     <nav className="p-2 space-y-0.5 mt-2">
-      {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+      {NAV_ITEMS.map(({ label, href, icon: Icon, badgeCount }) => {
         const active = pathname === href || pathname.startsWith(href + '/');
+        const showBadge = badgeCount && openConflictCount > 0;
         return (
           <Link
             key={href}
@@ -29,7 +32,12 @@ export function DashboardNav() {
             )}
           >
             <Icon className="size-4 shrink-0" />
-            {label}
+            <span className="flex-1">{label}</span>
+            {showBadge && (
+              <Badge variant="destructive" className="text-xs tabular-nums px-1.5 min-w-6 justify-center">
+                {openConflictCount > 99 ? '99+' : openConflictCount}
+              </Badge>
+            )}
           </Link>
         );
       })}

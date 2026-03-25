@@ -71,6 +71,43 @@ const { object } = await generateObject({
 
 7. COMPONENTS — Buttons: size variants only. Cards: rounded-xl. Inputs: h-9 bg-transparent border-input. Badges: semantic variants for status.
 
+8. FORM LAYOUT — VERTICAL ALIGNMENT — When mixing labeled fields with a bare button in a flex/grid row, TWO rules apply together:
+   a. Use `items-end` on the container (flex or grid).
+   b. Wrap the bare button in an invisible spacer label so every column is the same natural height. Without the spacer, flex-1 on a sibling wrapper stretches that column taller, making label tops misalign even though input bottoms are flush.
+
+✅ CORRECT — invisible spacer label pattern:
+```tsx
+<div className="flex gap-3 items-end">
+  <div className="space-y-1.5">
+    <Label className="text-xs">Email</Label>
+    <Input className="h-9" />
+  </div>
+  <div className="space-y-1.5">
+    {/* spacer keeps this column the same height as labeled columns */}
+    <Label className="text-xs invisible" aria-hidden="true">‎</Label>
+    <Button size="sm" className="h-9">Send</Button>
+  </div>
+</div>
+```
+
+✅ ALSO CORRECT — CSS grid with self-end (no spacer needed):
+```tsx
+<div className="grid grid-cols-[1fr_auto] gap-3 items-end">
+  <div className="space-y-1.5"><Label className="text-xs">Email</Label><Input className="h-9" /></div>
+  <Button size="sm" className="h-9 self-end">Send</Button>
+</div>
+```
+
+❌ WRONG — bare button in flex row, no spacer:
+```tsx
+<div className="flex gap-3 items-end">
+  <div className="flex-1 space-y-1.5"><Label /><Input className="h-9" /></div>
+  <Button />  {/* tops misalign — flex-1 stretches sibling taller */}
+</div>
+```
+
+Every Input, SelectTrigger, and Button in an inline form row must have explicit `h-9`. No implicit heights.
+
 ## What NOT to do
 - No client-side data fetching (no useEffect + fetch)
 - No direct db instantiation outside lib/db/index.ts

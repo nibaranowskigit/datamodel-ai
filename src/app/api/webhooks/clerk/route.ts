@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { orgs } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { seedReconciliationRules } from '@/lib/reconciliation/seed-rules';
 
 export async function POST(req: NextRequest) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -48,6 +49,9 @@ export async function POST(req: NextRequest) {
       plan: plan as 'free' | 'starter' | 'growth',
       status: 'active',
     }).onConflictDoNothing();
+
+    // Seed default master source priority rules for the new org (S1.5).
+    await seedReconciliationRules(data.id);
   }
 
   if (type === 'organization.updated') {

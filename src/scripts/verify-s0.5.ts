@@ -167,7 +167,10 @@ async function run() {
     }
   });
 
-  await check('CDM conflict created when two sources disagree', async () => {
+  // S1.5: Inline CDM conflict detection moved to reconcileUDMRecords().
+  // upsertCdmFieldValue now just upserts — cross-source conflicts are
+  // detected by the reconciliation engine after fan-out completes.
+  await check('CDM field value upserted from two sources without error', async () => {
     await upsertCdmFieldValue({
       recordId: cdmRecordId,
       orgId: TEST_ORG_B2B,
@@ -182,13 +185,13 @@ async function run() {
       value: 16000,
       sourceType: 'stripe',
     });
-    const conflict = await db.query.cdmConflicts.findFirst({
+    const fv = await db.query.cdmFieldValues.findFirst({
       where: and(
-        eq(cdmConflicts.recordId, cdmRecordId),
-        eq(cdmConflicts.fieldKey, 'FIN_arr_v1')
+        eq(cdmFieldValues.recordId, cdmRecordId),
+        eq(cdmFieldValues.fieldKey, 'FIN_arr_v1')
       ),
     });
-    return !!conflict && conflict.sourceA === 'hubspot' && conflict.sourceB === 'stripe';
+    return !!fv;
   });
 
   // Cleanup

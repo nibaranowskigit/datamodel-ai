@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { db } from '@/lib/db';
 import { dataSources, udmFields, syncLogs, orgs } from '@/lib/db/schema';
 import { and, eq, count, desc } from 'drizzle-orm';
+import { countOpenConflicts } from '@/lib/conflicts/open-count';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Database, Zap } from 'lucide-react';
+import { ArrowRight, Database, Zap, AlertTriangle } from 'lucide-react';
 
 export default async function DashboardPage() {
   const { orgId } = await orgGuard();
@@ -15,6 +16,7 @@ export default async function DashboardPage() {
     [{ value: activeSources }],
     [{ value: productionFields }],
     [{ value: pendingFields }],
+    openConflictCount,
     recentLogs,
   ] = await Promise.all([
     db.query.orgs.findFirst({
@@ -29,6 +31,7 @@ export default async function DashboardPage() {
     db.select({ value: count() }).from(udmFields).where(
       and(eq(udmFields.orgId, orgId), eq(udmFields.status, 'proposed'))
     ),
+    countOpenConflicts(orgId),
     db.query.syncLogs.findMany({
       where: eq(syncLogs.orgId, orgId),
       orderBy: [desc(syncLogs.startedAt)],
@@ -52,7 +55,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Link href="/settings/sources" className="group bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-colors duration-150">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Active Sources</p>
           <p className="text-3xl font-semibold tracking-tight mt-2">{activeSources}</p>
@@ -76,6 +79,24 @@ export default async function DashboardPage() {
             {pendingFields > 0 ? 'Fields awaiting approval' : 'Nothing to review'}
           </p>
         </div>
+
+        <Link
+          href="/conflicts"
+          className={`group bg-card border rounded-xl p-5 transition-colors duration-150 ${
+            openConflictCount > 0
+              ? 'border-destructive/40 bg-destructive/5 hover:border-destructive/50'
+              : 'border-border hover:border-primary/30'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="size-3.5 text-muted-foreground shrink-0" />
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Open conflicts</p>
+          </div>
+          <p className="text-3xl font-semibold tracking-tight mt-2 tabular-nums">{openConflictCount}</p>
+          <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary transition-colors duration-150">
+            {openConflictCount > 0 ? 'Review →' : 'None pending'}
+          </p>
+        </Link>
       </div>
 
       {/* Empty state — no sources */}

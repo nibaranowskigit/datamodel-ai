@@ -144,7 +144,7 @@ export function ApiKeysList({
         {isAdmin && (
           <Card className="p-4 space-y-3">
             <p className="text-sm font-medium">Create new key</p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-end">
               <div className="flex-1 space-y-1.5">
                 <Label htmlFor="key-name" className="text-xs">Key name</Label>
                 <Input
@@ -157,7 +157,8 @@ export function ApiKeysList({
                   maxLength={64}
                 />
               </div>
-              <div className="flex items-end">
+              <div className="space-y-1.5">
+                <Label className="text-xs invisible" aria-hidden="true">‎</Label>
                 <Button
                   onClick={handleCreate}
                   disabled={!newKeyName.trim() || creating}

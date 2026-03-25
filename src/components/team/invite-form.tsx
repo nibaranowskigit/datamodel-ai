@@ -41,9 +41,12 @@ async function inviteAction(
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="shrink-0">
-      {pending ? 'Sending…' : 'Send invite'}
-    </Button>
+    <div className="space-y-1.5">
+      <Label className="text-xs invisible" aria-hidden="true">‎</Label>
+      <Button type="submit" size="sm" disabled={pending} className="h-9">
+        {pending ? 'Sending…' : 'Send invite'}
+      </Button>
+    </div>
   );
 }
 
@@ -56,7 +59,7 @@ export function InviteForm() {
         <CardTitle className="text-base">Invite a teammate</CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem_auto]">
+        <form action={formAction} className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_9rem_auto] sm:items-end">
           <div className="space-y-1.5">
             <Label htmlFor="email" className="text-xs">Email address</Label>
             <Input
@@ -81,9 +84,7 @@ export function InviteForm() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-end">
-            <SubmitButton />
-          </div>
+          <SubmitButton />
         </form>
         {state?.error && (
           <p className="mt-3 text-sm text-destructive">{state.error}</p>

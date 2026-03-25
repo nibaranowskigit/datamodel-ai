@@ -11,9 +11,11 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
+  { label: 'Your profile',  href: '/settings/me' },
   { label: 'Profile',       href: '/settings/profile' },
   { label: 'Team',          href: '/settings/team' },
   { label: 'Sources',       href: '/settings/sources' },
+  { label: 'Reconciliation', href: '/settings/reconciliation' },
   { label: 'Notifications', href: '/settings/notifications' },
   { label: 'API Keys',      href: '/settings/api-keys' },
   { label: 'Billing',       href: '/settings/billing' },

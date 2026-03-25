@@ -48,7 +48,6 @@ export const cdmRecords = pgTable('cdm_records', {
 export const cdmRecordsRelations = relations(cdmRecords, ({ one, many }) => ({
   org:         one(orgs, { fields: [cdmRecords.orgId], references: [orgs.id] }),
   fieldValues: many(cdmFieldValues),
-  conflicts:   many(cdmConflicts),
 }));
 
 // ─── UDM Field Values ────────────────────────────────────────
@@ -94,31 +93,8 @@ export const cdmFieldValuesRelations = relations(cdmFieldValues, ({ one }) => ({
   record: one(cdmRecords, { fields: [cdmFieldValues.recordId], references: [cdmRecords.id] }),
 }));
 
-// ─── CDM Conflicts ───────────────────────────────────────────
-// Created when two sources provide different values for the same CDM field
-// Resolved by reconciliation engine (S1.5) based on master source rules
-
-export const cdmConflicts = pgTable('cdm_conflicts', {
-  id:         text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
-  recordId:   text('record_id').notNull().references(() => cdmRecords.id, { onDelete: 'cascade' }),
-  orgId:      text('org_id').notNull().references(() => orgs.id),
-  fieldKey:   text('field_key').notNull(),
-  sourceA:    text('source_a').notNull(),
-  valueA:     jsonb('value_a'),
-  sourceB:    text('source_b').notNull(),
-  valueB:     jsonb('value_b'),
-  resolution: text('resolution'),
-  resolvedAt: timestamp('resolved_at'),
-  createdAt:  timestamp('created_at').defaultNow().notNull(),
-});
-
-export const cdmConflictsRelations = relations(cdmConflicts, ({ one }) => ({
-  record: one(cdmRecords, { fields: [cdmConflicts.recordId], references: [cdmRecords.id] }),
-}));
-
 // Types
 export type UdmRecord     = typeof udmRecords.$inferSelect;
 export type CdmRecord     = typeof cdmRecords.$inferSelect;
 export type UdmFieldValue = typeof udmFieldValues.$inferSelect;
 export type CdmFieldValue = typeof cdmFieldValues.$inferSelect;
-export type CdmConflict   = typeof cdmConflicts.$inferSelect;
