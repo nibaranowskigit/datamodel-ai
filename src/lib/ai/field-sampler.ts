@@ -100,7 +100,7 @@ export async function getKnownFieldKeys(orgId: string): Promise<Set<string>> {
       columns: { fieldKey: true },
     }),
     db.query.proposedFields.findMany({
-      where:   eq(proposedFields.orgId, orgId),
+      where: eq(proposedFields.orgId, orgId),
       columns: { fieldKey: true },
     }),
   ]);

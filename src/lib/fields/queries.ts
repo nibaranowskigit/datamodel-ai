@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { udmFields } from '@/lib/db/schema';
+import { udmFields, proposedFields } from '@/lib/db/schema';
 import { and, eq } from 'drizzle-orm';
 
 // Used by agent API in S3.1 — only ever returns production fields
@@ -35,5 +35,16 @@ export async function getProposedUdmFields(orgId: string) {
       eq(udmFields.orgId, orgId),
       eq(udmFields.status, 'proposed')
     ),
+  });
+}
+
+/** AI sync pipeline — rows in proposed_fields awaiting promote/reject (S2.0). */
+export async function getPendingAiFieldProposals(orgId: string) {
+  return db.query.proposedFields.findMany({
+    where: and(
+      eq(proposedFields.orgId, orgId),
+      eq(proposedFields.status, 'proposed'),
+    ),
+    orderBy: (t, { desc }) => [desc(t.createdAt)],
   });
 }

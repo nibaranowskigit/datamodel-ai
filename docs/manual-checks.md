@@ -220,7 +220,7 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Trigger AI proposal run with new fields → email received within 60s
 - [ ] Email subject includes field count and source name
 - [ ] Email body describes what needs reviewing
-- [ ] Email CTA links to /fields
+- [ ] Email CTA links to /data-model/fields
 - [ ] In-app notification record created in DB
 - [ ] Run with 0 new proposals → no email fired
 - [ ] Toggle field_approval OFF → re-trigger → no email received
@@ -254,7 +254,7 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] No email sent when hasActivity = false (zero syncs + zero field changes)
 - [ ] Member with weekly_digest = false receives nothing
 - [ ] Digest skipped for org with no activity last 7 days
-- [ ] "Review now" link in email points to /fields when fields pending
+- [ ] "Review now" link in email points to /data-model/fields when fields pending
 - [ ] In-app notification record created in DB for each opted-in member
 
 ---
@@ -365,11 +365,14 @@ Mark each item `[x]` when confirmed in production or local dev.
 
 - [ ] Run full sync cycle → `proposeFields()` fires after reconciliation
 - [ ] New proposals appear in `proposed_fields` table
+- [ ] `/data-model/fields` lists AI proposals with evidence, Approve, and Reject
+- [ ] Approve promotes row to `udm_fields` with status production and clears the queue row
 - [ ] Each proposal has fieldKey, label, dataType, description, sourceEvidence
 - [ ] Proposals have sensible field keys in NAMESPACE_snake_case format
 - [ ] Run sync again → no duplicate proposals created (idempotent)
 - [ ] B2B org → CDM proposals also generated (model_type = 'cdm')
 - [ ] B2C org → no CDM proposals, only UDM proposals
-- [ ] NOTIF.3 fires after proposals → "N new fields need your approval"
+- [ ] NOTIF.3 fires after proposals → "N new fields need your approval" → CTA `/data-model/fields`
 - [ ] Max 20 proposals per sync run enforced
 - [ ] Claude API error on one namespace → other namespaces still propose
+- [ ] `/fields` redirects to `/data-model/fields` (legacy email links)

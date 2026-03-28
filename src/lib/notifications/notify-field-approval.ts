@@ -58,7 +58,7 @@ export async function notifyFieldApprovalNeeded(params: {
         type:  'field_approval',
         title: `${fieldCount} new ${fieldWord} need your approval (${sourceName})`,
         body:  `A recent ${sourceName} sync proposed ${fieldCount} new ${fieldWord} for your data model. Review and approve them to keep your model up to date.`,
-        link:  `${process.env.NEXT_PUBLIC_APP_URL}/fields`,
+        link:  `${process.env.NEXT_PUBLIC_APP_URL}/data-model/fields`,
         data:  { syncRunId, fieldCount, sourceName },
       });
     })

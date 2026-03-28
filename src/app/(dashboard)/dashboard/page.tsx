@@ -1,7 +1,7 @@
 import { orgGuard } from '@/lib/auth';
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import { dataSources, udmFields, syncLogs, orgs } from '@/lib/db/schema';
+import { dataSources, udmFields, proposedFields, syncLogs, orgs } from '@/lib/db/schema';
 import { and, eq, count, desc } from 'drizzle-orm';
 import { countOpenConflicts } from '@/lib/conflicts/open-count';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,8 @@ export default async function DashboardPage() {
     org,
     [{ value: activeSources }],
     [{ value: productionFields }],
-    [{ value: pendingFields }],
+    [{ value: udmProposedCount }],
+    [{ value: aiProposedCount }],
     openConflictCount,
     recentLogs,
   ] = await Promise.all([
@@ -31,6 +32,9 @@ export default async function DashboardPage() {
     db.select({ value: count() }).from(udmFields).where(
       and(eq(udmFields.orgId, orgId), eq(udmFields.status, 'proposed'))
     ),
+    db.select({ value: count() }).from(proposedFields).where(
+      and(eq(proposedFields.orgId, orgId), eq(proposedFields.status, 'proposed'))
+    ),
     countOpenConflicts(orgId),
     db.query.syncLogs.findMany({
       where: eq(syncLogs.orgId, orgId),
@@ -38,6 +42,8 @@ export default async function DashboardPage() {
       limit: 6,
     }),
   ]);
+
+  const pendingFields = udmProposedCount + aiProposedCount;
 
   const hasAnySources = activeSources > 0;
 
@@ -70,15 +76,20 @@ export default async function DashboardPage() {
           <p className="text-xs text-muted-foreground mt-1">Trusted by AI agents</p>
         </div>
 
-        <div className={`bg-card border rounded-xl p-5 transition-colors duration-150 ${
-          pendingFields > 0 ? 'border-warning/40 bg-warning/5' : 'border-border'
-        }`}>
+        <Link
+          href="/data-model/fields"
+          className={`group bg-card border rounded-xl p-5 transition-colors duration-150 block ${
+            pendingFields > 0
+              ? 'border-warning/40 bg-warning/5 hover:border-warning/50'
+              : 'border-border hover:border-primary/30'
+          }`}
+        >
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Pending Review</p>
           <p className="text-3xl font-semibold tracking-tight mt-2">{pendingFields}</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {pendingFields > 0 ? 'Fields awaiting approval' : 'Nothing to review'}
+          <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary transition-colors duration-150">
+            {pendingFields > 0 ? 'Review fields →' : 'Nothing to review'}
           </p>
-        </div>
+        </Link>
 
         <Link
           href="/conflicts"

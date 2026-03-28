@@ -45,8 +45,8 @@ async function run() {
   await check('title includes fieldCount and sourceName', () =>
     helper.includes('fieldCount') && helper.includes('sourceName') && helper.includes('title')
   );
-  await check('CTA links to /fields', () =>
-    helper.includes('/fields')
+  await check('CTA links to /data-model/fields', () =>
+    helper.includes('/data-model/fields')
   );
 
   console.log('\nINNGEST INTEGRATION');

@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Settings, AlertTriangle, Fingerprint } from 'lucide-react';
+import { LayoutDashboard, Settings, AlertTriangle, Fingerprint, Table2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, badgeCount: false as const },
+  { label: 'Fields', href: '/data-model/fields', icon: Table2, badgeCount: false as const },
   { label: 'Conflicts', href: '/conflicts', icon: AlertTriangle, badgeCount: true as const },
   { label: 'Identity', href: '/identity', icon: Fingerprint, badgeCount: false as const },
   { label: 'Settings', href: '/settings', icon: Settings, badgeCount: false as const },

@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
-import { syncLogs, udmFields, cdmRecords } from '@/lib/db/schema';
-import { and, eq, gte, lt } from 'drizzle-orm';
+import { syncLogs, udmFields, proposedFields, cdmRecords } from '@/lib/db/schema';
+import { and, eq, gte, lt, count } from 'drizzle-orm';
 
 export type DigestData = {
   orgId: string;
@@ -58,13 +58,19 @@ export async function buildDigestData(
     columns: { id: true },
   });
 
-  const pendingApproval = await db.query.udmFields.findMany({
-    where: and(
-      eq(udmFields.orgId, orgId),
-      eq(udmFields.status, 'proposed'),
-    ),
-    columns: { id: true },
-  });
+  const [[{ value: udmPending }], [{ value: aiPending }]] = await Promise.all([
+    db
+      .select({ value: count() })
+      .from(udmFields)
+      .where(and(eq(udmFields.orgId, orgId), eq(udmFields.status, 'proposed'))),
+    db
+      .select({ value: count() })
+      .from(proposedFields)
+      .where(
+        and(eq(proposedFields.orgId, orgId), eq(proposedFields.status, 'proposed')),
+      ),
+  ]);
+  const pendingApprovalCount = udmPending + aiPending;
 
   const proposedThisWeek = await db.query.udmFields.findMany({
     where: and(
@@ -99,7 +105,8 @@ export async function buildDigestData(
   const hasActivity =
     syncsThisWeek.length > 0 ||
     approvedThisWeek.length > 0 ||
-    proposedThisWeek.length > 0;
+    proposedThisWeek.length > 0 ||
+    pendingApprovalCount > 0;
 
   return {
     orgId,
@@ -113,7 +120,7 @@ export async function buildDigestData(
     },
     fields: {
       approvedThisWeek: approvedThisWeek.length,
-      pendingApproval:  pendingApproval.length,
+      pendingApproval:  pendingApprovalCount,
       proposedThisWeek: proposedThisWeek.length,
     },
     health: {

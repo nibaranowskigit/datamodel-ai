@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { countOpenConflicts } from '@/lib/conflicts/open-count';
 import { DashboardNav } from '@/components/dashboard/nav';
 import { UserAvatarButton } from '@/components/dashboard/user-avatar-button';
+import { Toaster } from '@/components/ui/sonner';
 
 export default async function DashboardLayout({
   children,
@@ -52,6 +53,7 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   );
 }

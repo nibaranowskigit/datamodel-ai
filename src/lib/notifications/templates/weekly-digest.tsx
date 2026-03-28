@@ -101,7 +101,7 @@ export function WeeklyDigestEmail({ title, body, link, data }: Props) {
         {digest.fields.pendingApproval > 0 && (
           <Text style={{ color: '#EF9F27', fontSize: '13px', margin: 0 }}>
             {digest.fields.pendingApproval} waiting for approval →{' '}
-            <Link href={`${appUrl}/fields`} style={{ color: '#0EA5E9' }}>
+            <Link href={`${appUrl}/data-model/fields`} style={{ color: '#0EA5E9' }}>
               Review now
             </Link>
           </Text>
