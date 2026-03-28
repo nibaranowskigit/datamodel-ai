@@ -366,13 +366,32 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Run full sync cycle → `proposeFields()` fires after reconciliation
 - [ ] New proposals appear in `proposed_fields` table
 - [ ] `/data-model/fields` lists AI proposals with evidence, Approve, and Reject
-- [ ] Approve promotes row to `udm_fields` with status production and clears the queue row
+- [ ] Approve promotes row to `udm_fields` with status production and marks `proposed_fields` approved (audit row kept)
 - [ ] Each proposal has fieldKey, label, dataType, description, sourceEvidence
 - [ ] Proposals have sensible field keys in NAMESPACE_snake_case format
 - [ ] Run sync again → no duplicate proposals created (idempotent)
 - [ ] B2B org → CDM proposals also generated (model_type = 'cdm')
 - [ ] B2C org → no CDM proposals, only UDM proposals
-- [ ] NOTIF.3 fires after proposals → "N new fields need your approval" → CTA `/data-model/fields`
+- [ ] NOTIF.3 fires after proposals → "N new fields need your approval" → CTA `/fields`
 - [ ] Max 20 proposals per sync run enforced
 - [ ] Claude API error on one namespace → other namespaces still propose
-- [ ] `/fields` redirects to `/data-model/fields` (legacy email links)
+- [ ] `/fields` field registry loads (Proposed / Approved / Rejected)
+
+---
+
+## S2.1 — Field Registry Browser
+
+- [ ] `/fields` loads — Proposed tab shown by default
+- [ ] Proposed fields visible with fieldKey, label, dataType badge, source
+- [ ] Filter by HS_ namespace → only HubSpot fields shown
+- [ ] Filter by dataType "number" → only number fields shown
+- [ ] Search "deal" → matching fields shown
+- [ ] Approve a field → disappears from Proposed tab, appears in Approved tab
+- [ ] Reject a field → disappears from Proposed tab, appears in Rejected tab
+- [ ] Click a row → drawer opens with description, rationale, evidence samples
+- [ ] Drawer: Approve from drawer → drawer closes, field approved
+- [ ] Bulk approve: select HS_ namespace → "Approve all HS_" button appears → approves all
+- [ ] B2B org → CDM namespace visible in filter with CDM fields
+- [ ] B2C org → no CDM option in namespace filter
+- [ ] Viewer role → no Approve/Reject buttons anywhere on page
+- [ ] Approved field: `approved_by` and `approved_at` set in DB

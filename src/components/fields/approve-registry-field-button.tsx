@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { toast } from 'sonner';
-import { approveField } from '@/lib/actions/fields';
+import { approveUdmFieldToProduction } from '@/lib/actions/fields';
 import { Button } from '@/components/ui/button';
 
 export function ApproveRegistryFieldButton({ fieldId }: { fieldId: string }) {
@@ -17,7 +17,7 @@ export function ApproveRegistryFieldButton({ fieldId }: { fieldId: string }) {
       onClick={() => {
         startTransition(async () => {
           try {
-            await approveField(fieldId);
+            await approveUdmFieldToProduction(fieldId);
             toast.success('Field approved to production');
           } catch (e) {
             toast.error((e as Error).message);

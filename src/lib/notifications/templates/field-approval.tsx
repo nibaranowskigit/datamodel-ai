@@ -15,7 +15,7 @@ export function FieldApprovalEmail({ title, body, link }: Props) {
       preview={title}
       title={title}
       ctaLabel="Review proposed fields"
-      ctaHref={link ?? `${process.env.NEXT_PUBLIC_APP_URL}/data-model/fields`}
+      ctaHref={link ?? `${process.env.NEXT_PUBLIC_APP_URL}/fields`}
     >
       <Text style={{ color: '#A1A1AA', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>
         {body}

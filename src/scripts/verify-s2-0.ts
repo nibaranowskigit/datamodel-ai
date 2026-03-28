@@ -98,8 +98,8 @@ async function run() {
   await check('approveAiFieldProposal promotes to udm_fields', () =>
     actions.includes('approveAiFieldProposal') && actions.includes("insert(udmFields)"),
   );
-  await check('rejectAiFieldProposal removes queue row', () =>
-    actions.includes('rejectAiFieldProposal') && actions.includes('.delete(proposedFields)'),
+  await check('rejectAiFieldProposal delegates to rejectField', () =>
+    actions.includes('rejectAiFieldProposal') && actions.includes('rejectField'),
   );
   await check('fields page exists', () => fs.existsSync('src/app/(dashboard)/data-model/fields/page.tsx'));
 

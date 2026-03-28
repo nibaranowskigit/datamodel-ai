@@ -77,7 +77,7 @@ export default async function DashboardPage() {
         </div>
 
         <Link
-          href="/data-model/fields"
+          href="/fields"
           className={`group bg-card border rounded-xl p-5 transition-colors duration-150 block ${
             pendingFields > 0
               ? 'border-warning/40 bg-warning/5 hover:border-warning/50'

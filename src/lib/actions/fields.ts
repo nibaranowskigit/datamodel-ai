@@ -12,8 +12,68 @@ import {
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-// Approve a proposed field — transitions to production
-export async function approveField(fieldId: string) {
+
+/** DB only — no cache revalidation (for bulk approve). */
+async function insertUdmAndMarkProposalApproved(
+  orgId: string,
+  userId: string,
+  fieldId: string,
+): Promise<void> {
+  const row = await db.query.proposedFields.findFirst({
+    where: and(
+      eq(proposedFields.id, fieldId),
+      eq(proposedFields.orgId, orgId),
+      eq(proposedFields.status, 'proposed'),
+    ),
+  });
+  if (!row) throw new Error('Field not found or already actioned.');
+
+  const existing = await db.query.udmFields.findFirst({
+    where: and(eq(udmFields.orgId, orgId), eq(udmFields.fieldKey, row.fieldKey)),
+  });
+  if (existing) throw new Error('This field already exists in the registry');
+
+  const ev = row.enumValues ?? [];
+  const enumNote =
+    row.dataType === 'enum' && ev.length > 0 ? ` Allowed values: ${ev.join(', ')}.` : '';
+  const aiRationale = `${row.rationale}${enumNote}`.slice(0, 4000);
+
+  await db.transaction(async (tx) => {
+    await tx.insert(udmFields).values({
+      orgId,
+      fieldKey: row.fieldKey,
+      displayName: row.label,
+      description: row.description,
+      typology: inferTypologyFromProposal(row.fieldKey, row.modelType),
+      dataType: mapProposalDataTypeToUdm(row.dataType),
+      status: 'production',
+      aiSuggested: true,
+      aiRationale,
+      approvedBy: userId,
+      approvedAt: new Date(),
+    });
+    const updated = await tx
+      .update(proposedFields)
+      .set({
+        status: 'approved',
+        approvedBy: userId,
+        approvedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(proposedFields.id, fieldId),
+          eq(proposedFields.orgId, orgId),
+          eq(proposedFields.status, 'proposed'),
+        ),
+      )
+      .returning({ id: proposedFields.id });
+    if (updated.length === 0) throw new Error('Proposal was updated by another request');
+  });
+}
+
+/** Approve a row in `udm_fields` (status proposed → production). */
+export async function approveUdmFieldToProduction(fieldId: string) {
   await requireRole('org:member');
   const { orgId, userId } = await getAuth();
 
@@ -38,81 +98,88 @@ export async function approveField(fieldId: string) {
   revalidatePath('/data-model/fields');
 }
 
-/** Promote an S2.0 AI row from proposed_fields into udm_fields (production). */
-export async function approveAiFieldProposal(proposedFieldId: string) {
+/**
+ * Approve an AI proposal in `proposed_fields`: insert production `udm_fields` row
+ * and mark the proposal approved (S2.1 registry).
+ */
+export async function approveField(fieldId: string): Promise<void> {
   await requireRole('org:member');
   const { orgId, userId } = await getAuth();
 
-  const row = await db.query.proposedFields.findFirst({
-    where: and(
-      eq(proposedFields.id, proposedFieldId),
-      eq(proposedFields.orgId, orgId),
-      eq(proposedFields.status, 'proposed'),
-    ),
-  });
-  if (!row) throw new Error('Proposal not found or already handled');
+  await insertUdmAndMarkProposalApproved(orgId, userId, fieldId);
 
-  const existing = await db.query.udmFields.findFirst({
-    where: and(eq(udmFields.orgId, orgId), eq(udmFields.fieldKey, row.fieldKey)),
-  });
-  if (existing) throw new Error('This field already exists in the registry');
-
-  const ev = row.enumValues ?? [];
-  const enumNote =
-    row.dataType === 'enum' && ev.length > 0 ? ` Allowed values: ${ev.join(', ')}.` : '';
-  const aiRationale = `${row.rationale}${enumNote}`.slice(0, 4000);
-
-  await db.transaction(async (tx) => {
-    await tx.insert(udmFields).values({
-      orgId,
-      fieldKey:      row.fieldKey,
-      displayName:   row.label,
-      description:   row.description,
-      typology:      inferTypologyFromProposal(row.fieldKey, row.modelType),
-      dataType:      mapProposalDataTypeToUdm(row.dataType),
-      status:        'production',
-      aiSuggested:   true,
-      aiRationale,
-      approvedBy:    userId,
-      approvedAt:    new Date(),
-    });
-    const cleared = await tx
-      .delete(proposedFields)
-      .where(
-        and(
-          eq(proposedFields.id, proposedFieldId),
-          eq(proposedFields.orgId, orgId),
-          eq(proposedFields.status, 'proposed'),
-        ),
-      )
-      .returning({ id: proposedFields.id });
-    if (cleared.length === 0) throw new Error('Proposal was updated by another request');
-  });
-
+  revalidatePath('/fields');
   revalidatePath('/data-model/fields');
   revalidatePath('/dashboard');
 }
 
-/** Dismiss AI queue row — removed so a future sync can propose the key again (unique is on org_id + field_key). */
-export async function rejectAiFieldProposal(proposedFieldId: string) {
+export async function rejectField(fieldId: string): Promise<void> {
   await requireRole('org:member');
-  const { orgId } = await getAuth();
+  const { orgId, userId } = await getAuth();
 
-  const removed = await db
-    .delete(proposedFields)
+  const updated = await db
+    .update(proposedFields)
+    .set({
+      status: 'rejected',
+      rejectedBy: userId,
+      rejectedAt: new Date(),
+      updatedAt: new Date(),
+    })
     .where(
       and(
-        eq(proposedFields.id, proposedFieldId),
+        eq(proposedFields.id, fieldId),
         eq(proposedFields.orgId, orgId),
         eq(proposedFields.status, 'proposed'),
       ),
     )
     .returning({ id: proposedFields.id });
 
-  if (removed.length === 0) throw new Error('Proposal not found or already handled');
+  if (updated.length === 0) throw new Error('Field not found or already actioned.');
 
+  revalidatePath('/fields');
   revalidatePath('/data-model/fields');
   revalidatePath('/dashboard');
+}
+
+export async function approveAllInNamespace(namespace: string): Promise<void> {
+  if (namespace === 'All') return;
+  await requireRole('org:member');
+  const { orgId, userId } = await getAuth();
+
+  const fields = await db.query.proposedFields.findMany({
+    where: and(eq(proposedFields.orgId, orgId), eq(proposedFields.status, 'proposed')),
+    columns: { id: true, fieldKey: true, modelType: true },
+  });
+
+  const toApprove = fields
+    .filter((f) =>
+      namespace === 'CDM' ? f.modelType === 'cdm' : f.fieldKey.startsWith(namespace),
+    )
+    .map((f) => f.id);
+
+  for (const id of toApprove) {
+    try {
+      await insertUdmAndMarkProposalApproved(orgId, userId, id);
+    } catch (e) {
+      const msg = (e as Error).message;
+      if (msg === 'This field already exists in the registry') continue;
+      throw e;
+    }
+  }
+
+  revalidatePath('/fields');
+  revalidatePath('/data-model/fields');
+  revalidatePath('/dashboard');
+}
+
+/** @deprecated Prefer `approveField` — kept for existing call sites. */
+export async function approveAiFieldProposal(proposedFieldId: string) {
+  return approveField(proposedFieldId);
+}
+
+/** @deprecated Prefer `rejectField` — kept for existing call sites. */
+export async function rejectAiFieldProposal(proposedFieldId: string) {
+  return rejectField(proposedFieldId);
 }
 
 // Deprecate a field — never hard delete
@@ -176,7 +243,7 @@ export async function updateField(
     displayName?: string;
     description?: string;
     fieldKey?: string;
-  }
+  },
 ) {
   await requireRole('org:member');
   const { orgId } = await getAuth();
@@ -190,7 +257,7 @@ export async function updateField(
   // field_key is immutable once production
   if (updates.fieldKey && updates.fieldKey !== field.fieldKey && field.status === 'production') {
     throw new Error(
-      'field_key is immutable once a field is in production. Create a new field and deprecate this one.'
+      'field_key is immutable once a field is in production. Create a new field and deprecate this one.',
     );
   }
 
