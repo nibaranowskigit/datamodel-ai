@@ -11,3 +11,4 @@ export * from './notifications';
 export * from './reconciliation-rules';
 export * from './cdm-conflicts';
 export * from './identity-matches';
+export * from './proposed-fields';

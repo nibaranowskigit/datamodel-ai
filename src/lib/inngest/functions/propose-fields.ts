@@ -1,11 +1,10 @@
 /**
- * NOTIF.3 stub — field proposal pipeline.
- * The AI generation logic (generateObject + Zod) will be filled in by S2.0.
- * This file establishes the Inngest function structure and wires in the
- * notifyFieldApprovalNeeded() call that NOTIF.3 requires.
+ * Optional entrypoint for `fields/proposal.requested` — same engine as S1.4
+ * `reconcile-and-propose` step (S2.0).
  */
 import { inngest } from '../client';
 import { notifyFieldApprovalNeeded } from '@/lib/notifications/notify-field-approval';
+import { proposeFields } from '@/lib/ai/propose-fields';
 
 // Human-readable labels for each source type — shared with notify-sync-failure
 const SOURCE_META: Record<string, { label: string }> = {
@@ -31,24 +30,21 @@ export const proposeFieldsJob = inngest.createFunction(
 
     const sourceName = SOURCE_META[sourceType]?.label ?? sourceType;
 
-    // Step 1 — AI generates proposed fields (S2.0 will implement this)
-    // TODO(S2.0): call generateObject() + Zod, insert to udmFields with status='proposed'
     const newProposals = await step.run('generate-field-proposals', async () => {
-      // Placeholder — S2.0 replaces this with real AI proposal logic
-      return [] as { fieldKey: string }[];
+      return proposeFields(orgId, syncRunId);
     });
 
-    // Step 2 — notify opted-in org members that proposals are ready for review
-    // Always runs after DB inserts so users are never alerted without a record.
-    await step.run('notify-field-approval', async () => {
-      await notifyFieldApprovalNeeded({
-        orgId,
-        sourceType,
-        sourceName,
-        fieldCount: newProposals.length,
-        syncRunId,
+    if (newProposals.length > 0) {
+      await step.run('notify-field-approval', async () => {
+        await notifyFieldApprovalNeeded({
+          orgId,
+          sourceType,
+          sourceName,
+          fieldCount: newProposals.length,
+          syncRunId,
+        });
       });
-    });
+    }
 
     return { orgId, sourceType, fieldCount: newProposals.length };
   }

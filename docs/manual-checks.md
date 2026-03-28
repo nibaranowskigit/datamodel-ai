@@ -358,3 +358,18 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Alias record has `alias_of_id` pointing to primary
 - [ ] Agent cannot see alias records — only primary resolved records
 - [ ] Gmail/Yahoo domains never trigger domain-only match
+
+---
+
+## S2.0 — AI Field Proposal Engine
+
+- [ ] Run full sync cycle → `proposeFields()` fires after reconciliation
+- [ ] New proposals appear in `proposed_fields` table
+- [ ] Each proposal has fieldKey, label, dataType, description, sourceEvidence
+- [ ] Proposals have sensible field keys in NAMESPACE_snake_case format
+- [ ] Run sync again → no duplicate proposals created (idempotent)
+- [ ] B2B org → CDM proposals also generated (model_type = 'cdm')
+- [ ] B2C org → no CDM proposals, only UDM proposals
+- [ ] NOTIF.3 fires after proposals → "N new fields need your approval"
+- [ ] Max 20 proposals per sync run enforced
+- [ ] Claude API error on one namespace → other namespaces still propose
