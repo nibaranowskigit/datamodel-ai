@@ -7,6 +7,7 @@ import { getDecryptedConfig } from '@/lib/connectors/config';
 import { createSyncLog, completeSyncLog, failSyncLog } from '@/lib/sync/logger';
 import type { ConnectorConfig, SyncResult } from '@/lib/connectors/types';
 import { reconcileUDMRecords } from '@/lib/reconciliation';
+import { resolveIdentities } from '@/lib/identity/resolve';
 import { proposeFields } from '@/lib/ai/propose-fields';
 import { notifySyncFailure } from '@/lib/notifications/notify-sync-failure';
 import { notifyFieldApprovalNeeded } from '@/lib/notifications/notify-field-approval';
@@ -162,10 +163,13 @@ export const syncOrgSources = inngest.createFunction(
       // 1. Reconcile — cross-source UDM record merge by email (S1.5)
       await reconcileUDMRecords(orgId);
 
-      // 2. AI field proposals based on reconciled data (S2.0)
+      // 2. Identity resolution — cross-source entity matching (S1.6)
+      await resolveIdentities(orgId);
+
+      // 3. AI field proposals based on reconciled data (S2.0)
       const proposals = await proposeFields(orgId, syncRunId);
 
-      // 3. Notify org members if new proposals are ready
+      // 4. Notify org members if new proposals are ready
       if (proposals.length > 0) {
         await notifyFieldApprovalNeeded({
           orgId,

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { notifyBilling } from '@/lib/notifications/notify-billing';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
-  apiVersion: '2026-02-25.clover',
-});
+// Webhook signature verification uses `Stripe.webhooks.constructEvent` only — no API key.
+// Avoid `new Stripe(process.env.STRIPE_SECRET_KEY)` at module load so `next build` works
+// when Stripe secrets are absent (e.g. CI).
 
 function formatAmount(amount: number, currency: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, signature, WEBHOOK_SECRET);
+    event = Stripe.webhooks.constructEvent(body, signature, WEBHOOK_SECRET);
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }

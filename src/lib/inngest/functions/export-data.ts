@@ -1,7 +1,7 @@
 import { inngest } from '../client';
 import { db } from '@/lib/db';
 import { orgs, cdmRecords, udmRecords, syncLogs } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { resend } from '@/lib/resend';
 
 export const exportOrgData = inngest.createFunction(
@@ -26,7 +26,9 @@ export const exportOrgData = inngest.createFunction(
           },
         }),
         db.query.cdmRecords.findMany({ where: eq(cdmRecords.orgId, orgId) }),
-        db.query.udmRecords.findMany({ where: eq(udmRecords.orgId, orgId) }),
+        db.query.udmRecords.findMany({
+          where: and(eq(udmRecords.orgId, orgId), isNull(udmRecords.aliasOfId)),
+        }),
         db.query.syncLogs.findMany({ where: eq(syncLogs.orgId, orgId) }),
       ]);
 

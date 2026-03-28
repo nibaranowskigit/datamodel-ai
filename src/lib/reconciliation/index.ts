@@ -5,7 +5,7 @@ import {
   cdmConflicts,
   reconciliationRules,
 } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { isConflict, mostRecentDate, normalise, parseNumeric } from './normalise';
 import {
   buildPriorityMapForField,
@@ -56,7 +56,7 @@ export async function reconcileUDMRecords(orgId: string): Promise<{
   });
 
   const records = await db.query.udmRecords.findMany({
-    where: eq(udmRecords.orgId, orgId),
+    where: and(eq(udmRecords.orgId, orgId), isNull(udmRecords.aliasOfId)),
     columns: { id: true, email: true },
     with: {
       fieldValues: {

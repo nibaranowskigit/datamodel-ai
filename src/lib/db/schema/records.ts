@@ -1,6 +1,7 @@
 import {
   pgTable, text, timestamp,
   jsonb, real, unique,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { orgs } from './orgs';
@@ -16,6 +17,7 @@ export const udmRecords = pgTable('udm_records', {
   email:          text('email'),
   data:           jsonb('data').default({}).notNull(),
   fillRate:       real('fill_rate').default(0).notNull(),
+  aliasOfId:      text('alias_of_id').references((): AnyPgColumn => udmRecords.id),
   createdAt:      timestamp('created_at').defaultNow().notNull(),
   updatedAt:      timestamp('updated_at').defaultNow().notNull(),
 }, (table) => ({

@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { udmRecords } from '@/lib/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import {
   upsertUdmRecord,
   upsertUdmFieldValue,
@@ -194,6 +194,7 @@ export class MixpanelConnector implements Connector {
       where: and(
         eq(udmRecords.orgId, orgId),
         eq(udmRecords.email, email),
+        isNull(udmRecords.aliasOfId),
       ),
     });
 

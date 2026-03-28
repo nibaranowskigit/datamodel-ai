@@ -341,3 +341,20 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] Open conflict count appears on sidebar (Conflicts) and dashboard stat when conflicts exist
 - [ ] `/settings/sources` shows destructive badge linking to `/conflicts` when count > 0
 - [ ] `/settings/reconciliation` lists per-namespace priority; admin can change ranks and save — next sync uses new winners
+
+---
+
+## S1.6 — Identity Resolution
+
+- [ ] Run full sync — identity resolution fires after reconciliation
+- [ ] Two records with same email → auto-merged (`alias_of_id` set on one)
+- [ ] Two records, same domain + name → auto-merged (confidence 0.85 ≥ threshold)
+- [ ] Two records, same domain only → appear in `/identity` review queue (confidence 0.5)
+- [ ] `/identity` page loads — pending review items visible
+- [ ] Each review item shows both email addresses + sources
+- [ ] Click "Merge these records" → records merged → item disappears from queue
+- [ ] Click "Keep separate" → item disappears + never shown again on next sync
+- [ ] Merged record (primary) has fields from both sources
+- [ ] Alias record has `alias_of_id` pointing to primary
+- [ ] Agent cannot see alias records — only primary resolved records
+- [ ] Gmail/Yahoo domains never trigger domain-only match

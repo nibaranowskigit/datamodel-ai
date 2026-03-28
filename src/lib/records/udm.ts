@@ -2,6 +2,21 @@ import { db } from '@/lib/db';
 import { udmRecords, udmFieldValues, udmFields } from '@/lib/db/schema';
 import { and, eq, count } from 'drizzle-orm';
 
+/** Follow `alias_of_id` to the canonical UDM row (S1.6 identity merge). */
+export async function resolveCanonicalUdmRecordId(recordId: string, orgId: string): Promise<string> {
+  let id = recordId;
+  for (let i = 0; i < 32; i++) {
+    const row = await db.query.udmRecords.findFirst({
+      where: and(eq(udmRecords.id, id), eq(udmRecords.orgId, orgId)),
+      columns: { aliasOfId: true },
+    });
+    if (!row) return recordId;
+    if (!row.aliasOfId) return id;
+    id = row.aliasOfId;
+  }
+  return recordId;
+}
+
 export async function upsertUdmRecord(input: {
   orgId: string;
   externalUserId: string;
@@ -16,6 +31,7 @@ export async function upsertUdmRecord(input: {
   });
 
   if (existing) {
+    const targetId = await resolveCanonicalUdmRecordId(existing.id, input.orgId);
     await db
       .update(udmRecords)
       .set({
@@ -23,8 +39,8 @@ export async function upsertUdmRecord(input: {
         email: input.email ?? existing.email,
         updatedAt: new Date(),
       })
-      .where(eq(udmRecords.id, existing.id));
-    return existing.id;
+      .where(eq(udmRecords.id, targetId));
+    return targetId;
   }
 
   const [record] = await db
@@ -48,9 +64,11 @@ export async function upsertUdmFieldValue(input: {
   sourceType: string;
   confidence?: number;
 }) {
+  const recordId = await resolveCanonicalUdmRecordId(input.recordId, input.orgId);
+
   const existing = await db.query.udmFieldValues.findFirst({
     where: and(
-      eq(udmFieldValues.recordId, input.recordId),
+      eq(udmFieldValues.recordId, recordId),
       eq(udmFieldValues.fieldKey, input.fieldKey)
     ),
   });
@@ -68,7 +86,7 @@ export async function upsertUdmFieldValue(input: {
       .where(eq(udmFieldValues.id, existing.id));
   } else {
     await db.insert(udmFieldValues).values({
-      recordId: input.recordId,
+      recordId,
       orgId: input.orgId,
       fieldKey: input.fieldKey,
       value: input.value,
