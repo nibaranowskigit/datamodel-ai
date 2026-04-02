@@ -47,10 +47,11 @@ function visibleForOrg(f: RegistryFieldRow, isB2B: boolean): boolean {
 
 function parseEvidence(sourceEvidence: string | null): {
   recordCount?: number;
+  sampleValues?: string[];
 } | null {
   if (!sourceEvidence) return null;
   try {
-    return JSON.parse(sourceEvidence) as { recordCount?: number };
+    return JSON.parse(sourceEvidence) as { recordCount?: number; sampleValues?: string[] };
   } catch {
     return null;
   }
@@ -248,11 +249,13 @@ export function FieldRegistry({
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
 
       {filtered.length === 0 ? (
-        <div className="py-12 text-center space-y-2">
+        <div className="py-12 text-center space-y-2 max-w-md mx-auto">
           <p className="text-sm text-muted-foreground">
             {tab === 'proposed'
               ? 'No proposed fields. Run a sync to generate proposals.'
-              : `No ${tab} fields.`}
+              : tab === 'approved'
+                ? 'No approved fields yet. Approve proposals from the Proposed tab.'
+                : 'No rejected proposals.'}
           </p>
         </div>
       ) : (
@@ -284,6 +287,14 @@ export function FieldRegistry({
                     <span className="text-xs px-1.5 py-0.5 rounded-md border border-border bg-muted text-muted-foreground font-medium">
                       {field.dataType}
                     </span>
+                    <Badge variant="outline" className="text-xs font-normal">
+                      {getSourceFromKey(field.fieldKey)}
+                    </Badge>
+                    {field.status === 'proposed' ? (
+                      <Badge variant="secondary" className="text-xs">
+                        Proposed
+                      </Badge>
+                    ) : null}
                     {field.modelType === 'cdm' ? (
                       <Badge variant="outline" className="text-xs">
                         CDM
@@ -297,12 +308,19 @@ export function FieldRegistry({
                   </div>
                   <div className="flex items-center gap-3 flex-wrap">
                     <p className="text-sm text-muted-foreground truncate">{field.label}</p>
-                    <span className="text-xs text-muted-foreground hidden sm:inline">
-                      {getSourceFromKey(field.fieldKey)}
-                    </span>
+                    {field.confidence !== null && field.confidence !== undefined ? (
+                      <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                        {Math.round(field.confidence * 100)}% confidence
+                      </span>
+                    ) : null}
                     {evidence?.recordCount != null ? (
                       <span className="text-xs text-muted-foreground hidden md:inline tabular-nums">
                         {evidence.recordCount} records
+                      </span>
+                    ) : null}
+                    {evidence?.sampleValues != null && evidence.sampleValues.length > 0 ? (
+                      <span className="text-xs text-muted-foreground hidden md:inline tabular-nums">
+                        {evidence.sampleValues.length} samples
                       </span>
                     ) : null}
                   </div>
