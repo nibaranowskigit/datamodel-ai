@@ -395,3 +395,22 @@ Mark each item `[x]` when confirmed in production or local dev.
 - [ ] B2C org → no CDM option in namespace filter
 - [ ] Viewer role → no Approve/Reject buttons anywhere on page
 - [ ] Approved field: `approved_by` and `approved_at` set in DB
+
+---
+
+## S2.2 — Record Browser + 360 View
+
+- [ ] `/records` loads with paginated list of UDM records
+- [ ] Search "sarah" → matching records appear
+- [ ] Alias records NOT shown in list (merged duplicates hidden)
+- [ ] Source badges (HS ST IC MP) show which connectors contributed
+- [ ] Click a record → `/records/users/[id]` — 360 view loads
+- [ ] 360 view groups fields by namespace: CRM / Finance / Support / Product
+- [ ] Only approved fields visible — proposed fields do not appear (registry uses `udm_fields` production)
+- [ ] Empty namespace sections hidden (no "Finance (0 fields)" blocks)
+- [ ] Completeness bar and % shown correctly
+- [ ] "empty" shown in muted style for unpopulated fields
+- [ ] B2B org: Companies tab visible
+- [ ] B2C org: no Companies tab
+- [ ] Breadcrumb: "Records / sarah@acme.com" with working back link
+- [ ] Invalid record ID → 404 page
