@@ -1,5 +1,4 @@
 import { SignIn } from '@clerk/nextjs';
-import Link from 'next/link';
 import { ValueProps } from '@/components/auth/value-props';
 
 export default function SignInPage() {
@@ -25,13 +24,6 @@ export default function SignInPage() {
             forceRedirectUrl="/"
             signUpUrl="/sign-up"
           />
-
-          <p className="text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link href="/sign-up" className="underline underline-offset-4 hover:text-foreground duration-150">
-              Sign up
-            </Link>
-          </p>
         </div>
       </div>
     </div>

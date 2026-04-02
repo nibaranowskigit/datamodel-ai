@@ -1,7 +1,6 @@
 import { SignUp } from '@clerk/nextjs';
 import { PlanSelector } from '@/components/auth/plan-selector';
 import { ValueProps } from '@/components/auth/value-props';
-import Link from 'next/link';
 
 export default async function SignUpPage({
   searchParams,
@@ -14,7 +13,7 @@ export default async function SignUpPage({
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left — value props (desktop only) */}
-      <div className="hidden lg:flex flex-col justify-center px-12 bg-muted/30 border-r">
+      <div className="hidden lg:flex flex-col justify-center px-12 bg-muted/30 border-r border-border">
         <ValueProps />
       </div>
 
@@ -23,7 +22,7 @@ export default async function SignUpPage({
         <div className="w-full max-w-md space-y-6">
           {/* Mobile-only headline */}
           <div className="text-center lg:hidden">
-            <h1 className="text-2xl font-bold">Datamodel.ai</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Datamodel.ai</h1>
             <p className="text-sm text-muted-foreground mt-1">
               The data model your AI agents trust.
             </p>
@@ -35,13 +34,6 @@ export default async function SignUpPage({
             forceRedirectUrl="/create-org"
             signInUrl="/sign-in"
           />
-
-          <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link href="/sign-in" className="underline underline-offset-4 hover:text-foreground">
-              Sign in
-            </Link>
-          </p>
         </div>
       </div>
     </div>

@@ -61,11 +61,11 @@ async function run() {
     );
     return content.includes('lg:hidden');
   });
-  await check('"Don\'t have an account?" link present', () => {
+  await check('SignUp path wired (signUpUrl on SignIn — Clerk shows footer link)', () => {
     const content = fs.readFileSync(
       "src/app/(auth)/sign-in/[[...sign-in]]/page.tsx", 'utf8'
     );
-    return content.includes('Sign up') && content.includes('href="/sign-up"');
+    return content.includes('signUpUrl="/sign-up"');
   });
   await check('left panel hidden on mobile (hidden lg:flex)', () => {
     const content = fs.readFileSync(

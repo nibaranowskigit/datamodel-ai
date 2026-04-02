@@ -113,27 +113,38 @@ function ForgotPasswordForm() {
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl font-semibold tracking-tight">Reset your password</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Enter your email and we&apos;ll send you a reset link.
-        </p>
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight">Datamodel.ai</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            The data model your AI agents trust.
+          </p>
+        </div>
 
-      <div className="rounded-xl border border-border bg-card p-6">
-        <ForgotPasswordForm />
-      </div>
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold tracking-tight">Reset your password</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Enter your email and we&apos;ll send you a reset link.
+            </p>
+          </div>
 
-      <p className="text-center text-sm text-muted-foreground">
-        Remember it?{' '}
-        <Link
-          href="/sign-in"
-          className="text-primary hover:underline underline-offset-4 duration-150"
-        >
-          Back to sign in
-        </Link>
-      </p>
+          <div className="rounded-xl border border-border bg-card p-6">
+            <ForgotPasswordForm />
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground">
+            Remember it?{' '}
+            <Link
+              href="/sign-in"
+              className="text-primary hover:underline underline-offset-4 duration-150"
+            >
+              Back to sign in
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

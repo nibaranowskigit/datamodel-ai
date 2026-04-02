@@ -9,9 +9,9 @@ export default async function CreateOrgPage() {
   if (orgId) redirect('/onboarding');
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-12">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Name your workspace</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Name your workspace</h1>
         <p className="text-muted-foreground mt-1 text-sm">
           This is what your team will see.
         </p>
