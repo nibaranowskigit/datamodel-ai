@@ -67,7 +67,7 @@ async function run() {
     notifyFile.includes('shouldNotify')
   );
   await check('notify sends email via resend', () =>
-    notifyFile.includes('resend.emails.send')
+    notifyFile.includes('getResend().emails.send') || notifyFile.includes('resend.emails.send')
   );
   await check('notify inserts into notifications table', () =>
     notifyFile.includes('db.insert(notifications)')

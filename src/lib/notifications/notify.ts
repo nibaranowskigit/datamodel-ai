@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { notifications } from '@/lib/db/schema';
-import { resend } from '@/lib/resend';
+import { getResend } from '@/lib/resend';
 import { shouldNotify } from '@/lib/notifications/should-notify';
 import type { NotificationType } from '@/lib/notifications/types';
 import { getEmailTemplate } from '@/lib/notifications/templates';
@@ -30,7 +30,7 @@ export async function notify(payload: NotifyPayload): Promise<void> {
   const template = getEmailTemplate(type, { title, body, link, data });
 
   const from = process.env.RESEND_FROM_ADDRESS ?? 'Datamodel.ai <onboarding@resend.dev>';
-  await resend.emails.send({
+  await getResend().emails.send({
     from,
     to: email,
     subject: title,

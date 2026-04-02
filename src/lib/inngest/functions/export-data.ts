@@ -2,7 +2,7 @@ import { inngest } from '../client';
 import { db } from '@/lib/db';
 import { orgs, cdmRecords, udmRecords, syncLogs } from '@/lib/db/schema';
 import { and, eq, isNull } from 'drizzle-orm';
-import { resend } from '@/lib/resend';
+import { getResend } from '@/lib/resend';
 
 export const exportOrgData = inngest.createFunction(
   {
@@ -55,7 +55,7 @@ export const exportOrgData = inngest.createFunction(
       const json = JSON.stringify(exportPayload, null, 2);
       const base64 = Buffer.from(json).toString('base64');
 
-      await resend.emails.send({
+      await getResend().emails.send({
         from: 'Datamodel.ai <exports@datamodel.ai>',
         to: email,
         subject: 'Your data export is ready',

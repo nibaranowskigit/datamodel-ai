@@ -1,7 +1,16 @@
 import { Resend } from 'resend';
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not set');
-}
+let cached: Resend | null = null;
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
+/**
+ * Lazy Resend client so importing notification code does not require
+ * RESEND_API_KEY at module load (e.g. `next build` / route collection).
+ */
+export function getResend(): Resend {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    throw new Error('RESEND_API_KEY is not set');
+  }
+  cached ??= new Resend(key);
+  return cached;
+}
